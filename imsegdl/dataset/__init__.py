@@ -1,1 +1,1 @@
-from imsegdl.dataset import *
+from .dataset import *
