@@ -1,2 +1,2 @@
-from imsegdl import *
-__version__ = '1.0'
+from imsegdl.controller import ImsegDL
+__version__ = '1.0.1'
