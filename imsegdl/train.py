@@ -3,7 +3,7 @@
 # version : v1.0
 
 from imsegdl.dataset.dataset import COCODataset
-# from imsegdl.model.model import UNet
+from imsegdl.model.model import UNet
 from torch.utils.data import DataLoader
 from datetime import datetime
 from tqdm import tqdm
