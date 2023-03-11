@@ -16,5 +16,5 @@ setuptools.setup(
     description='A python package for image segmentation',
     version=version,
     packages=setuptools.find_packages(),
-    install_requires=['json', 'numpy', 'matplotlib', 'torch', 'torchvision', 'torchaudio', 'pycocotools', 'tqdm']
+    install_requires=['requests', 'numpy', 'matplotlib', 'torch', 'torchvision', 'torchaudio', 'pycocotools', 'tqdm']
 )
