@@ -4,7 +4,7 @@
 
 from imsegdl.utils.utils import gen_empty_annf, mask2ann
 from imsegdl.dataset.dataset import COCODataset
-from imsegdl.model.model import UNet
+from imsegdl.abc.model import UNet
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from datetime import datetime
