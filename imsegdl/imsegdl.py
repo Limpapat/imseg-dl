@@ -1,5 +1,5 @@
-from .train import train
-from .eval import eval
+from imsegdl.train import train
+from imsegdl.eval import eval
 import json
 
 class ImsegDL:

@@ -2,8 +2,8 @@
 # updated : 04-03-2023
 # version : v1.0
 
-from .dataset.dataset import COCODataset
-from .model.model import UNet
+from imsegdl.dataset.dataset import COCODataset
+from imsegdl.model.model import UNet
 from torch.utils.data import DataLoader
 from datetime import datetime
 from tqdm import tqdm
