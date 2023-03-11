@@ -11,7 +11,7 @@ except IndexError:
     raise RuntimeError("Unable to determine version")
 
 setuptools.setup(
-    name='imseqdl',
+    name='imsegdl',
     author='L.Bussaban',
     description='A python package for image segmentation',
     version=version,
