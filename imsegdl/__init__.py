@@ -1,1 +1,2 @@
-__version__ = '1.0.1'
+from imsegdl import *
+__version__ = '1.0'
