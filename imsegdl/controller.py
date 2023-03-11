@@ -1,5 +1,5 @@
 # from imsegdl.train import train
-from imsegdl.eval import eval
+# from imsegdl.eval import eval
 import json
 
 class ImsegDL:
@@ -15,9 +15,9 @@ class ImsegDL:
     #     print("--- Stop taining: trained model is saved to {}".format(trained_model_path))
     #     print("-"*40)
     
-    def eval_model(self):
-        print("-"*40)
-        print("--- Start evaluation: trained model path is {}".format(self.params["EVALUATION"]["MODEL_PATH"]))
-        saving_eval_path = eval(self.params)
-        print("--- Stop evaluation: results are saved to {}".format(saving_eval_path))
-        print("-"*40)
+    # def eval_model(self):
+    #     print("-"*40)
+    #     print("--- Start evaluation: trained model path is {}".format(self.params["EVALUATION"]["MODEL_PATH"]))
+    #     saving_eval_path = eval(self.params)
+    #     print("--- Stop evaluation: results are saved to {}".format(saving_eval_path))
+    #     print("-"*40)
