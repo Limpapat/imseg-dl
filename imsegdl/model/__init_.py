@@ -1,1 +1,1 @@
-from .model import *
+from imsegdl.model import *
