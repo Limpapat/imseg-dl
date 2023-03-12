@@ -3,10 +3,11 @@ from imsegdl.eval import eval
 import json
 
 class ImsegDL:
-    def __init__(self, params_path:str):
+    def __init__(self, params_path:str, **kwarg):
         self.params_path = params_path
         with open(params_path, 'r') as f:
             self.params = json.loads(f.read())
+        self.params = {**self.params, **kwarg}
     
     def train_model(self):
         print("-"*40)

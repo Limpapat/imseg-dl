@@ -30,18 +30,18 @@ def train(params:dict):
     TRAIN_ANN_FILE = params["DATASET"]["TRAIN_ANN_FILE"]
     VAL_DIR = params["DATASET"]["VAL_DIR"]
     VAL_ANN_FILE = params["DATASET"]["VAL_ANN_FILE"]
-    TRANSFORM = params["DATASET"]["TRANSFORM"]
-    BATCH_SIZE = params["DATASET"]["BATCH_SIZE"]
-    SHUFFLE = params["DATASET"]["SHUFFLE"]
-    NUM_WORKERS = params["DATASET"]["NUM_WORKERS"]
-    LEARNING_RATE = params["OPTIMIZER"]["LEARNING_RATE"]
-    PRETRAINED_MODEL = params["TRAIN"]["PRETRAINED_MODEL"]
-    checkpoint = torch.load(PRETRAINED_MODEL, map_location=torch.device(DEVICE)) if PRETRAINED_MODEL else {}
     EPOCHS = params["TRAIN"]["EPOCHS"]
     EARLY_STOPPING_TOLERANCE = params["TRAIN"]["EARLY_STOPPING_TOLERANCE"]
     EARLY_STOPPING_THRESHOLD = params["TRAIN"]["EARLY_STOPPING_THRESHOLD"]
     RESULT_PATH = params["TRAIN"]["RESULT_PATH"]
-    DISP_PLOT = params["TRAIN"]["DISP_PLOT"]
+    TRANSFORM = params["transform"] if "transform" in params.keys() else None
+    BATCH_SIZE = params["batch_size"] if "batch_size" in params.keys() else 1
+    SHUFFLE = params["shuffle"] if "shuffle" in params.keys() else True
+    NUM_WORKERS = params["num_workers"] if "num_workers" in params.keys() else (1 if torch.cuda.is_available() else 0)
+    LEARNING_RATE = params["learning_rate"] if "learning_rate" in params.keys() else 0.005
+    DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
+    PRETRAINED_MODEL = params["pretrained_model"] if "pretrained_model" in params.keys() else None
+    checkpoint = torch.load(PRETRAINED_MODEL, map_location=torch.device(DEVICE)) if PRETRAINED_MODEL else {}
     INIT_EPOCHS = checkpoint['epoch'] + 1 if PRETRAINED_MODEL else 1
 
     # load dataset

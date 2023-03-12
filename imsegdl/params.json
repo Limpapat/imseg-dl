@@ -5,26 +5,16 @@
         "TEST_DIR" : "/path/to/test",
         "TRAIN_ANN_FILE" : "/path/to/train/_annotations.coco.json",
         "VAL_ANN_FILE" : "/path/to/valid/_annotations.coco.json",
-        "TEST_ANN_FILE" : "/path/to/test/_annotations.coco.json",
-        "BATCH_SIZE" : 1,
-        "SHUFFLE" : true,
-        "NUM_WORKERS" : 1,
-        "TRANSFORM" : null
-    },
-    "OPTIMIZER" : {
-        "LEARNING_RATE" : 0.005
+        "TEST_ANN_FILE" : "/path/to/test/_annotations.coco.json"
     },
     "TRAIN" : {
-        "PRETRAINED_MODEL" : null,
         "EPOCHS" : 100,
         "EARLY_STOPPING_TOLERANCE" : 20,
         "EARLY_STOPPING_THRESHOLD" : 1e-4,
-        "RESULT_PATH" : "/path/to/results",
-        "DISP_PLOT" : false
+        "RESULT_PATH" : "/path/to/results"
     },
     "EVALUATION" : {
         "MODEL_PATH" : "/path/to/model.pth",
-        "SAVE_PATH" : "/path/to/results",
-        "DISP_PLOT" : false
+        "SAVE_PATH" : "/path/to/results"
     }
 }

@@ -6,7 +6,6 @@ from imsegdl.utils.utils import gen_empty_annf, mask2ann
 from imsegdl.dataset.dataset import COCODataset
 from imsegdl.model.model import UNet
 from torch.utils.data import DataLoader
-from torchvision import transforms
 from datetime import datetime
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -29,21 +28,21 @@ def eval(params:dict):
     # params setting
     TEST_DIR = params["DATASET"]["TEST_DIR"]
     TEST_ANN_FILE = params["DATASET"]["TEST_ANN_FILE"]
-    DISP_PLOT = params["EVALUATION"]["DISP_PLOT"]
     RESULT_PATH = params["EVALUATION"]["SAVE_PATH"]
     model_path = params["EVALUATION"]["MODEL_PATH"]
     checkpoint = torch.load(model_path, map_location=torch.device(DEVICE))
     N_CLASSES = checkpoint['n_classes']
     LEARNING_RATE = checkpoint['learning_rate']
     VERSION = checkpoint['version']
-    BATCH_SIZE = 1
+    BATCH_SIZE = params["batch_size"] if "batch_size" in params.keys() else 1
+    DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
 
     # create empty _annotation.coco.json
     now = datetime.now()
     gen_empty_annf(root_dir=TEST_DIR,ann_dir=TEST_ANN_FILE, version=VERSION, stamp=now.strftime("%Y-%m-%dT%H:%M:%S+00:00"))
 
     # load test dataset
-    transform = transforms.Compose([transforms.Resize((512,512))])
+    transform = params["transform"] if "transform" in params.keys() else None
     test_dataset = COCODataset(TEST_DIR, TEST_ANN_FILE, transforms=transform, dbtype="test")
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
