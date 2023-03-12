@@ -174,6 +174,7 @@ def train(params:dict):
             print("-"*20)
 
     # plot loss at the last training epoch
+    plt.figure()
     plt.plot(LOSS_TRAIN_VALS, label='train')
     plt.plot(LOSS_VALIDATION_VALS, label='validation')
     plt.legend()
