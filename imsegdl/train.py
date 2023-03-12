@@ -25,16 +25,19 @@ def train(params:dict):
     SHUFFLE = params["DATASET"]["SHUFFLE"]
     NUM_WORKERS = params["DATASET"]["NUM_WORKERS"]
     LEARNING_RATE = params["OPTIMIZER"]["LEARNING_RATE"]
+    PRETRAINED_MODEL = params["TRAIN"]["PRETRAINED_MODEL"]
+    checkpoint = torch.load(PRETRAINED_MODEL, map_location=torch.device(DEVICE)) if PRETRAINED_MODEL else {}
     EPOCHS = params["TRAIN"]["EPOCHS"]
     EARLY_STOPPING_TOLERANCE = params["TRAIN"]["EARLY_STOPPING_TOLERANCE"]
     EARLY_STOPPING_THRESHOLD = params["TRAIN"]["EARLY_STOPPING_THRESHOLD"]
     RESULT_PATH = params["TRAIN"]["RESULT_PATH"]
     DISP_PLOT = params["TRAIN"]["DISP_PLOT"]
+    INIT_EPOCHS = checkpoint['epoch'] if PRETRAINED_MODEL else 1
 
     # load dataset
     train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, transforms=TRANSFORM)
     val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, transforms=TRANSFORM)
-    N_CLASSES = train_dataset.n_classes
+    N_CLASSES = checkpoint['n_classes'] if PRETRAINED_MODEL else train_dataset.n_classes
     VERSION = train_dataset.version
 
     # define data loader
@@ -42,6 +45,7 @@ def train(params:dict):
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=SHUFFLE, num_workers=NUM_WORKERS)
     N_TRAIN, N_VAL = len(train_loader), len(val_loader)
 
+    print("-"*40)
     # cuda device setting
     if torch.cuda.is_available():
         DEVICE = 'cuda:0'
@@ -49,6 +53,7 @@ def train(params:dict):
     else:
         DEVICE = "cpu"
         print('Running on the CPU')
+    print("-"*40)
     
     # create an instance of the U-Net model
     model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
@@ -58,6 +63,13 @@ def train(params:dict):
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
+    # load pre-trained model
+    if PRETRAINED_MODEL is not None:
+        print(f"Pre-trained model is detected : path : {PRETRAINED_MODEL}")
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        print("Loading pre-trained model success")
+
     # define result path
     saving_path = os.path.join(RESULT_PATH, "train_{}".format(datetime.now().strftime("%Y%m%d%H%M%S")))
     os.mkdir(saving_path)
@@ -65,11 +77,11 @@ def train(params:dict):
     os.mkdir(os.path.join(saving_path, "val"))
 
     # train
-    LOSS_TRAIN_VALS = []
-    LOSS_VALIDATION_VALS = []
+    print("-"*40)
+    LOSS_TRAIN_VALS = checkpoint["train_loss"] if PRETRAINED_MODEL else []
+    LOSS_VALIDATION_VALS = checkpoint["val_loss"] if PRETRAINED_MODEL else []
     early_stopping_counter = 0
-    checkpoint_dict = {}
-    for e in range(1, EPOCHS + 1):
+    for e in range(INIT_EPOCHS, EPOCHS + 1):
         print("EPOCH : {}".format(e))
         model.train()
         train_loss_vals = []

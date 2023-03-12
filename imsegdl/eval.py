@@ -16,6 +16,7 @@ import json
 import os
 
 def eval(params:dict):
+    print("-"*40)
     # cuda device setting
     if torch.cuda.is_available():
         DEVICE = 'cuda:0'
@@ -23,6 +24,7 @@ def eval(params:dict):
     else:
         DEVICE = "cpu"
         print('Running on the CPU')
+    print("-"*40)
 
     # params setting
     TEST_DIR = params["DATASET"]["TEST_DIR"]

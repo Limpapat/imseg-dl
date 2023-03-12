@@ -15,6 +15,7 @@
         "LEARNING_RATE" : 0.005
     },
     "TRAIN" : {
+        "PRETRAINED_MODEL" : null,
         "EPOCHS" : 100,
         "EARLY_STOPPING_TOLERANCE" : 20,
         "EARLY_STOPPING_THRESHOLD" : 1e-4,
