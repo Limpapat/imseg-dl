@@ -40,6 +40,7 @@ def train(params:dict):
     NUM_WORKERS = params["num_workers"] if "num_workers" in params.keys() else (1 if torch.cuda.is_available() else 0)
     LEARNING_RATE = params["learning_rate"] if "learning_rate" in params.keys() else 0.005
     DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
+    RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
     PRETRAINED_MODEL = params["pretrained_model"] if "pretrained_model" in params.keys() else None
     checkpoint = torch.load(PRETRAINED_MODEL, map_location=torch.device(DEVICE)) if PRETRAINED_MODEL else {}
     INIT_EPOCHS = checkpoint['epoch'] + 1 if PRETRAINED_MODEL else 1
@@ -92,8 +93,9 @@ def train(params:dict):
         model.train()
         train_loss_vals = []
         train_loader = tqdm(train_loader)
-        fig = plt.gcf()
-        fig.set_size_inches((N_TRAIN//9 + 1) * 9, 12)
+        if RES_PLOT:
+            fig = plt.gcf()
+            fig.set_size_inches((N_TRAIN//9 + 1) * 9, 12)
         for idx, batch in enumerate(train_loader):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
@@ -103,19 +105,21 @@ def train(params:dict):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-            # plot train prediction
-            pred_detach = pred.detach()
-            pred_detach = pred_detach.sigmoid()
-            pred_detach = pred_detach.cpu()
-            pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
-            for i in range(N_CLASSES):
-                pred_plot += pred_detach[:,i,:,:]
-            sp = plt.subplot(N_TRAIN//9, 9, idx+1)
-            sp.axis('Off')
-            plt.imshow(pred_plot.squeeze().numpy())
-        plt.savefig(f'{saving_path}/train/train_{e}.png')
-        if DISP_PLOT:
-            plt.show()
+            if RES_PLOT:
+                # plot train prediction
+                pred_detach = pred.detach()
+                pred_detach = pred_detach.sigmoid()
+                pred_detach = pred_detach.cpu()
+                pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
+                for i in range(N_CLASSES):
+                    pred_plot += pred_detach[:,i,:,:]
+                sp = plt.subplot(N_TRAIN//9, 9, idx+1)
+                sp.axis('Off')
+                plt.imshow(pred_plot.squeeze().numpy())
+        if RES_PLOT:
+            plt.savefig(f'{saving_path}/train/train_{e}.png')
+            if DISP_PLOT:
+                plt.show()
         LOSS_TRAIN_VALS.append(sum(train_loss_vals)/len(train_loss_vals))
         print("----- TRAIN Loss : {}".format(LOSS_TRAIN_VALS[-1]))
         print("-"*20)
@@ -124,8 +128,9 @@ def train(params:dict):
         model.eval()
         val_loss_vals = []
         val_loader = tqdm(val_loader)
-        fig = plt.gcf()
-        fig.set_size_inches((N_VAL//9 + 1) * 9, 12)
+        if RES_PLOT:
+            fig = plt.gcf()
+            fig.set_size_inches((N_VAL//9 + 1) * 9, 12)
         with torch.no_grad():
             for idx, batch in enumerate(val_loader):
                 X, y = batch
@@ -133,19 +138,21 @@ def train(params:dict):
                 pred = model(X)
                 val_loss = criterion(pred, y.float())
                 val_loss_vals.append(val_loss.item())
-                # plot val prediction
-                pred_detach = pred.detach()
-                pred_detach = pred_detach.sigmoid()
-                pred_detach = pred_detach.cpu()
-                pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
-                for i in range(N_CLASSES):
-                    pred_plot += pred_detach[:,i,:,:]
-                sp = plt.subplot(N_VAL//9, 9, idx+1)
-                sp.axis('Off')
-                plt.imshow(pred_plot.squeeze().numpy())
-            plt.savefig(f'{saving_path}/val/val_{e}.png')
-            if DISP_PLOT:
-                plt.show()
+                if RES_PLOT:
+                    # plot val prediction
+                    pred_detach = pred.detach()
+                    pred_detach = pred_detach.sigmoid()
+                    pred_detach = pred_detach.cpu()
+                    pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
+                    for i in range(N_CLASSES):
+                        pred_plot += pred_detach[:,i,:,:]
+                    sp = plt.subplot(N_VAL//9, 9, idx+1)
+                    sp.axis('Off')
+                    plt.imshow(pred_plot.squeeze().numpy())
+            if RES_PLOT:
+                plt.savefig(f'{saving_path}/val/val_{e}.png')
+                if DISP_PLOT:
+                    plt.show()
             cum_loss = sum(val_loss_vals)/len(val_loss_vals)
             LOSS_VALIDATION_VALS.append(cum_loss)
             print("----- VALIDATION Loss : {}".format(LOSS_VALIDATION_VALS[-1]))

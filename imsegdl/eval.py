@@ -36,6 +36,7 @@ def eval(params:dict):
     VERSION = checkpoint['version']
     BATCH_SIZE = params["batch_size"] if "batch_size" in params.keys() else 1
     DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
+    RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
 
     # create empty _annotation.coco.json
     now = datetime.now()
@@ -61,8 +62,6 @@ def eval(params:dict):
     anns={"last_ann_id":-1, "annotation":[]}
     with torch.no_grad():
         for idx, batch in enumerate(tqdm(test_loader)):
-            fig = plt.gcf()
-            fig.set_size_inches(28, 18)
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
             pred = model(X)
@@ -72,31 +71,34 @@ def eval(params:dict):
             # gen annotation
             pred_mask = pred.detach().cpu().squeeze().numpy()
             anns = mask2ann(pred_mask, image_id=idx, annotation=anns)
-            # plot prediction
-            sp = plt.subplot(1, 8, 1)
-            sp.axis('Off')
-            y_detach = y.detach().cpu()
-            y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
-            for i in range(N_CLASSES):
-                y_plot += y_detach[:,i,:,:]
-            plt.imshow(y_plot.squeeze().numpy())
-            plt.title("ground truth")
-            sp = plt.subplot(1, 8, 2)
-            sp.axis('Off')
-            pred_detach = pred.detach().cpu()
-            pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
-            for i in range(N_CLASSES):
-                pred_plot += pred_detach[:,i,:,:]
-            plt.imshow(pred_plot.squeeze().numpy())
-            plt.title("all")
-            for i in range(N_CLASSES):
-                sp = plt.subplot(1, 8, 3+i)
+            if RES_PLOT:
+                # plot prediction
+                fig = plt.gcf()
+                fig.set_size_inches(28, 18)
+                sp = plt.subplot(1, 8, 1)
                 sp.axis('Off')
-                plt.imshow(pred_detach[:,i,:,:].squeeze().numpy())
-                plt.title(f"class {i}")
-            plt.savefig(f'{saving_path}/eval_{idx}.png')
-            if DISP_PLOT:
-                plt.show()
+                y_detach = y.detach().cpu()
+                y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
+                for i in range(N_CLASSES):
+                    y_plot += y_detach[:,i,:,:]
+                plt.imshow(y_plot.squeeze().numpy())
+                plt.title("ground truth")
+                sp = plt.subplot(1, 8, 2)
+                sp.axis('Off')
+                pred_detach = pred.detach().cpu()
+                pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
+                for i in range(N_CLASSES):
+                    pred_plot += pred_detach[:,i,:,:]
+                plt.imshow(pred_plot.squeeze().numpy())
+                plt.title("all")
+                for i in range(N_CLASSES):
+                    sp = plt.subplot(1, 8, 3+i)
+                    sp.axis('Off')
+                    plt.imshow(pred_detach[:,i,:,:].squeeze().numpy())
+                    plt.title(f"class {i}")
+                plt.savefig(f'{saving_path}/eval_{idx}.png')
+                if DISP_PLOT:
+                    plt.show()
     # update & save _annotation.coco.json
     with open(TEST_ANN_FILE, 'r') as f:
         annf = json.loads(f.read())
