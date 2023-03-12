@@ -53,10 +53,11 @@ class COCODataset(Dataset):
 
     return image, target
   
-  def disp(self, img_id, draw_bbox=False):
+  def disp(self, idx, draw_bbox=False):
     """
       This function isn't accepted for evaluation !
     """
+    img_id = self.ids[idx]
     img = self.coco.loadImgs(img_id)[0]
     img_path = f'{self.root_dir}/{img["file_name"]}'
 
