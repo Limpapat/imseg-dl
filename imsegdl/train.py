@@ -42,7 +42,7 @@ def train(params:dict):
     EARLY_STOPPING_THRESHOLD = params["TRAIN"]["EARLY_STOPPING_THRESHOLD"]
     RESULT_PATH = params["TRAIN"]["RESULT_PATH"]
     DISP_PLOT = params["TRAIN"]["DISP_PLOT"]
-    INIT_EPOCHS = checkpoint['epoch'] if PRETRAINED_MODEL else 1
+    INIT_EPOCHS = checkpoint['epoch'] + 1 if PRETRAINED_MODEL else 1
 
     # load dataset
     train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, transforms=TRANSFORM)
@@ -62,12 +62,14 @@ def train(params:dict):
     # criterion = nn.CrossEntropyLoss()
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    print("-"*40)
     print("Construct model : U-net")
     print("Construct optimizer : Adam - learning_rate : {}".format(LEARNING_RATE))
     print("Define criterion : BCEWithLogitsLoss")
 
     # load pre-trained model
     if PRETRAINED_MODEL is not None:
+        print("-"*40)
         print(f"Pre-trained model is detected : path : {PRETRAINED_MODEL}")
         model.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
