@@ -210,6 +210,6 @@ if __name__ == "__main__":
     print("-"*40)
     print("--- Start taining: params path is {}".format(args.params))
     trained_model_path = train(params_json)
-    message = "trained model is saved to {}".format(trained_model_path) if not trained_model_path else "there is no better model saved"
+    message = "trained model is saved to {}".format(trained_model_path) if trained_model_path is not None else "there is no better model saved"
     print("--- Stop taining: {}".format(message))
     print("-"*40)
