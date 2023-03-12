@@ -86,6 +86,7 @@ def train(params:dict):
     LOSS_TRAIN_VALS = checkpoint["train_loss"] if PRETRAINED_MODEL else []
     LOSS_VALIDATION_VALS = checkpoint["val_loss"] if PRETRAINED_MODEL else []
     early_stopping_counter = 0
+    model_saving_path = None
     for e in range(INIT_EPOCHS, EPOCHS + 1):
         print("EPOCH : {}".format(e))
         model.train()
@@ -168,8 +169,6 @@ def train(params:dict):
                 # save best model
                 model_saving_path = os.path.join(saving_path, "model.pth")
                 torch.save(checkpoint_dict, model_saving_path)
-            else:
-                model_saving_path = None
             
             # early stopping
             if cum_loss > best_loss:
