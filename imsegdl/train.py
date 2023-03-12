@@ -15,6 +15,16 @@ import json
 import os
 
 def train(params:dict):
+    print("-"*40)
+    # cuda device setting
+    if torch.cuda.is_available():
+        DEVICE = 'cuda:0'
+        print('Running on the GPU')
+    else:
+        DEVICE = "cpu"
+        print('Running on the CPU')
+    print("-"*40)
+
     # params setting
     TRAIN_DIR = params["DATASET"]["TRAIN_DIR"]
     TRAIN_ANN_FILE = params["DATASET"]["TRAIN_ANN_FILE"]
@@ -44,16 +54,6 @@ def train(params:dict):
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=SHUFFLE, num_workers=NUM_WORKERS)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=SHUFFLE, num_workers=NUM_WORKERS)
     N_TRAIN, N_VAL = len(train_loader), len(val_loader)
-
-    print("-"*40)
-    # cuda device setting
-    if torch.cuda.is_available():
-        DEVICE = 'cuda:0'
-        print('Running on the GPU')
-    else:
-        DEVICE = "cpu"
-        print('Running on the CPU')
-    print("-"*40)
     
     # create an instance of the U-Net model
     model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
