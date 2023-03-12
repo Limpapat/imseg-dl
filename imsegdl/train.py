@@ -183,6 +183,8 @@ def train(params:dict):
     plt.plot(list(range(1, len(LOSS_TRAIN_VALS)+1)), LOSS_TRAIN_VALS, label='train')
     plt.plot(list(range(1, len(LOSS_VALIDATION_VALS)+1)), LOSS_VALIDATION_VALS, label='validation')
     plt.legend()
+    plt.xlabel("Epoch")
+    plt.ylabel("Average loss")
     plt.title("Loss")
     plt.savefig(f'{saving_path}/loss.png')
     if DISP_PLOT:
