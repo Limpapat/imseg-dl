@@ -60,6 +60,7 @@ def train(params:dict):
 
     # define result path
     saving_path = os.path.join(RESULT_PATH, "train_{}".format(datetime.now().strftime("%Y%m%d%H%M%S")))
+    os.mkdir(saving_path)
     os.mkdir(os.path.join(saving_path, "train"))
     os.mkdir(os.path.join(saving_path, "val"))
 

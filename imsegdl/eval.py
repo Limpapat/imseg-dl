@@ -53,6 +53,7 @@ def eval(params:dict):
 
     # define saving evaluation results path
     saving_path = os.path.join(RESULT_PATH, "evaluation_{}".format(datetime.now().strftime("%Y%m%d%H%M%S")))
+    os.mkdir(saving_path)
 
     # evaluation
     model.eval()
