@@ -16,6 +16,14 @@ import json
 import os
 
 def eval(params:dict):
+    # cuda device setting
+    if torch.cuda.is_available():
+        DEVICE = 'cuda:0'
+        print('Running on the GPU')
+    else:
+        DEVICE = "cpu"
+        print('Running on the CPU')
+
     # params setting
     TEST_DIR = params["DATASET"]["TEST_DIR"]
     TEST_ANN_FILE = params["DATASET"]["TEST_ANN_FILE"]
@@ -27,14 +35,6 @@ def eval(params:dict):
     LEARNING_RATE = checkpoint['learning_rate']
     VERSION = checkpoint['version']
     BATCH_SIZE = 1
-
-    # cuda device setting
-    if torch.cuda.is_available():
-        DEVICE = 'cuda:0'
-        print('Running on the GPU')
-    else:
-        DEVICE = "cpu"
-        print('Running on the CPU')
 
     # create empty _annotation.coco.json
     now = datetime.now()
