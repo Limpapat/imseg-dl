@@ -62,6 +62,9 @@ def train(params:dict):
     # criterion = nn.CrossEntropyLoss()
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    print("Construct model : U-net")
+    print("Construct optimizer : Adam - learning_rate : {}".format(LEARNING_RATE))
+    print("Define criterion : BCEWithLogitsLoss")
 
     # load pre-trained model
     if PRETRAINED_MODEL is not None:
