@@ -12,7 +12,8 @@ class ImsegDL:
         print("-"*40)
         print("--- Start taining: params path is {}".format(self.params_path))
         trained_model_path = train(self.params)
-        print("--- Stop taining: trained model is saved to {}".format(trained_model_path))
+        message = "trained model is saved to {}".format(trained_model_path) if trained_model_path is not None else "there is no better model saved"
+        print("--- Stop taining: {}".format(message))
         print("-"*40)
     
     def eval_model(self):
