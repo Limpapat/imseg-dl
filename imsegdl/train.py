@@ -165,6 +165,11 @@ def train(params:dict):
                     'train_loss' : LOSS_TRAIN_VALS,
                     'val_loss' : LOSS_VALIDATION_VALS
                     }
+                # save best model
+                model_saving_path = os.path.join(saving_path, "model.pth")
+                torch.save(checkpoint_dict, model_saving_path)
+            else:
+                model_saving_path = None
             
             # early stopping
             if cum_loss > best_loss:
@@ -189,10 +194,6 @@ def train(params:dict):
     plt.savefig(f'{saving_path}/loss.png')
     if DISP_PLOT:
         plt.show()
-
-    # save best model
-    model_saving_path = os.path.join(saving_path, "model.pth")
-    torch.save(checkpoint_dict, model_saving_path)
     return model_saving_path
 
 if __name__ == "__main__":
@@ -209,5 +210,6 @@ if __name__ == "__main__":
     print("-"*40)
     print("--- Start taining: params path is {}".format(args.params))
     trained_model_path = train(params_json)
-    print("--- Stop taining: trained model is saved to {}".format(trained_model_path))
+    message = "trained model is saved to {}".format(trained_model_path) if trained_model_path else "there is no better model saved"
+    print("--- Stop taining: {}".format(message))
     print("-"*40)
