@@ -30,6 +30,7 @@ def train(params:dict):
     TRAIN_ANN_FILE = params["DATASET"]["TRAIN_ANN_FILE"]
     VAL_DIR = params["DATASET"]["VAL_DIR"]
     VAL_ANN_FILE = params["DATASET"]["VAL_ANN_FILE"]
+    CATEGORIES = params["TRAIN"]["CATEGORIES"]
     EPOCHS = params["TRAIN"]["EPOCHS"]
     EARLY_STOPPING_TOLERANCE = params["TRAIN"]["EARLY_STOPPING_TOLERANCE"]
     EARLY_STOPPING_THRESHOLD = params["TRAIN"]["EARLY_STOPPING_THRESHOLD"]
@@ -46,8 +47,8 @@ def train(params:dict):
     INIT_EPOCHS = checkpoint['epoch'] + 1 if PRETRAINED_MODEL else 1
 
     # load dataset
-    train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, transforms=TRANSFORM)
-    val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, transforms=TRANSFORM)
+    train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM)
+    val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM)
     N_CLASSES = checkpoint['n_classes'] if PRETRAINED_MODEL else train_dataset.n_classes
     VERSION = train_dataset.version
 

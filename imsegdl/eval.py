@@ -47,7 +47,7 @@ def eval(params:dict):
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None
-    test_dataset = COCODataset(TEST_DIR, TEST_ANN_FILE, transforms=transform, dbtype="test")
+    test_dataset = COCODataset(TEST_DIR, TEST_ANN_FILE, categories_path=CATEGORIES, transforms=transform, dbtype="test")
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
     # load trained model
