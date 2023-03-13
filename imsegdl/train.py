@@ -51,6 +51,10 @@ def train(params:dict):
     val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM)
     N_CLASSES = checkpoint['n_classes'] if PRETRAINED_MODEL else train_dataset.n_classes
     VERSION = train_dataset.version
+    print("-"*40)
+    print("DATASET VERSION : {}".format(VERSION))
+    print("N_TRAIN : {}, N_VAL : {}, N_CLASSES : {}".format(len(train_dataset), len(val_dataset), N_CLASSES))
+    print("-"*40)
 
     # define data loader
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=SHUFFLE, num_workers=NUM_WORKERS)
