@@ -14,6 +14,7 @@
         "RESULT_PATH" : "/path/to/results"
     },
     "EVALUATION" : {
+        "CATEGORIES" : "/path/to/categories.json",
         "MODEL_PATH" : "/path/to/model.pth",
         "SAVE_PATH" : "/path/to/results"
     }

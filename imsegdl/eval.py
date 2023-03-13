@@ -28,6 +28,7 @@ def eval(params:dict):
     # params setting
     TEST_DIR = params["DATASET"]["TEST_DIR"]
     TEST_ANN_FILE = params["DATASET"]["TEST_ANN_FILE"]
+    CATEGORIES = params["EVALUATION"]["CATEGORIES"]
     RESULT_PATH = params["EVALUATION"]["SAVE_PATH"]
     model_path = params["EVALUATION"]["MODEL_PATH"]
     checkpoint = torch.load(model_path, map_location=torch.device(DEVICE))
@@ -39,8 +40,10 @@ def eval(params:dict):
     RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
 
     # create empty _annotation.coco.json
+    with open(CATEGORIES, 'r') as f:
+        cats = json.loads(f.read())
     now = datetime.now()
-    gen_empty_annf(root_dir=TEST_DIR,ann_dir=TEST_ANN_FILE, version=VERSION, stamp=now.strftime("%Y-%m-%dT%H:%M:%S+00:00"))
+    gen_empty_annf(root_dir=TEST_DIR,ann_dir=TEST_ANN_FILE, version=VERSION, stamp=now.strftime("%Y-%m-%dT%H:%M:%S+00:00"), cats=cats)
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None

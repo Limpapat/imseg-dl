@@ -20,6 +20,7 @@ class COCODataset(Dataset):
     self.transforms = transforms
     self.n_classes = len(self.coco.categories) - 1
     self.version = self.coco.dataset['info']['version']
+    self.cats_idx_for_target = {j['id']:i for i, j in enumerate(self.coco.categories)}
     if dbtype not in ["train", "test"]:
       raise ValueError("Invalid dbtype: {}".format(dbtype))
     self.dbtype = dbtype
@@ -33,9 +34,9 @@ class COCODataset(Dataset):
     anns = self.coco.loadAnns(ann_ids)
     target = np.zeros((self.n_classes, self.coco.imgs[img_id]['height'], self.coco.imgs[img_id]['width']), dtype=np.float32)
 
-    for i, ann in enumerate(anns):
+    for ann in anns:
       mask = self.coco.annToMask(ann).astype(np.float32)
-      target[i] = mask
+      target[self.cats_idx_for_target[ann['category_id']]] += mask
 
     target[target > 1] = 1
     image_path = os.path.join(self.root_dir, self.coco.loadImgs(img_id)[0]['file_name'])

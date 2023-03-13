@@ -57,7 +57,8 @@ def mask2ann(ground_truth_mask:np.array, image_id, annotation:dict={"last_ann_id
   annotation["last_ann_id"] = ann_id
   return annotation
 
-def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str):
+def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str, cats:list):
+    # TODO : update "categories" for other dataset!
     annf = {
        "info" : {
             "year" : stamp.split("-")[0],
@@ -72,15 +73,7 @@ def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str):
             "url" : "https://creativecommons.org/licenses/by/4.0/",
             "name": "CC BY 4.0"
         },
-        "categories" : [
-            {'id': 0, 'name': 'teeth', 'supercategory': 'none'},
-            {'id': 1, 'name': '0', 'supercategory': 'teeth'},
-            {'id': 2, 'name': '1', 'supercategory': 'teeth'},
-            {'id': 3, 'name': '2', 'supercategory': 'teeth'},
-            {'id': 4, 'name': '3', 'supercategory': 'teeth'},
-            {'id': 5, 'name': '4', 'supercategory': 'teeth'},
-            {'id': 6, 'name': '5', 'supercategory': 'teeth'}
-        ],
+        "categories" : cats,
         "images" : [],
         "annotations" : [],
     }
