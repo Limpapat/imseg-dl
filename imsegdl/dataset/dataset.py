@@ -5,6 +5,7 @@
 from PIL import Image
 from torch.utils.data import Dataset
 from imsegdl.dataset.imsegcoco import ImsegCOCO
+from imsegdl.utils.utils import load_categories_json
 from torchvision.transforms.functional import to_tensor
 from torchvision.utils import save_image
 import matplotlib.pyplot as plt
@@ -13,14 +14,15 @@ import torch
 import os
 
 class COCODataset(Dataset):
-  def __init__(self, root_dir, ann_file, transforms=None, dbtype="train"):
+  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train"):
     self.root_dir = root_dir
     self.coco = ImsegCOCO(ann_file)
     self.ids = list(sorted(self.coco.imgs.keys()))
     self.transforms = transforms
-    self.n_classes = len(self.coco.categories) - 1
+    self.categories = load_categories_json(categories_path) if categories_path else self.coco.categories
+    self.n_classes = len(self.categories)
     self.version = self.coco.dataset['info']['version']
-    self.cats_idx_for_target = {j['id']:i for i, j in enumerate(self.coco.categories)}
+    self.cats_idx_for_target = {j['id']:i for i, j in enumerate(self.categories)}
     if dbtype not in ["train", "test"]:
       raise ValueError("Invalid dbtype: {}".format(dbtype))
     self.dbtype = dbtype
@@ -35,8 +37,9 @@ class COCODataset(Dataset):
     target = np.zeros((self.n_classes, self.coco.imgs[img_id]['height'], self.coco.imgs[img_id]['width']), dtype=np.float32)
 
     for ann in anns:
-      mask = self.coco.annToMask(ann).astype(np.float32)
-      target[self.cats_idx_for_target[ann['category_id']]] += mask
+      if ann['category_id'] in self.cats_idx_for_target.keys():
+        mask = self.coco.annToMask(ann).astype(np.float32)
+        target[self.cats_idx_for_target[ann['category_id']]] += mask
 
     target[target > 1] = 1
     image_path = os.path.join(self.root_dir, self.coco.loadImgs(img_id)[0]['file_name'])

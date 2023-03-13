@@ -8,6 +8,7 @@
         "TEST_ANN_FILE" : "/path/to/test/_annotations.coco.json"
     },
     "TRAIN" : {
+        "CATEGORIES" : "/path/to/categories.json",
         "EPOCHS" : 100,
         "EARLY_STOPPING_TOLERANCE" : 20,
         "EARLY_STOPPING_THRESHOLD" : 1e-4,
