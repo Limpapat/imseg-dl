@@ -61,6 +61,10 @@ def eval(params:dict):
     saving_path = os.path.join(RESULT_PATH, "evaluation_{}".format(datetime.now().strftime("%Y%m%d%H%M%S")))
     os.mkdir(saving_path)
 
+    print("-"*40)
+    print("Filter with probability : {}".format(P))
+    print("-"*40)
+
     # evaluation
     model.eval()
     anns={"last_ann_id":-1, "annotation":[]}
