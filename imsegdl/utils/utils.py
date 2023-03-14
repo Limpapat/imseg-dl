@@ -35,6 +35,8 @@ def mask2ann(ground_truth_mask:np.array, image_id, cats_idx:dict, annotation:dic
     ground_truth_mask.shape = (n_classes, h, w)
     """
     ann_id = annotation["last_ann_id"]
+    if ground_truth_mask.ndim <= 2:
+        ground_truth_mask = np.expand_dims(ground_truth_mask, axis=0)
     for i in range(ground_truth_mask.shape[0]):
         ann_id += 1
         ground_truth_binary_mask = ground_truth_mask[i,:,:]
