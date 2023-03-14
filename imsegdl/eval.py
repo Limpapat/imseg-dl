@@ -38,7 +38,7 @@ def eval(params:dict):
     BATCH_SIZE = params["batch_size"] if "batch_size" in params.keys() else 1
     DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
     RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
-    P = params['p'] if "p" in params.keys() else 0.
+    P = params['p'] if "p" in params.keys() else None
 
     # create empty _annotation.coco.json
     with open(CATEGORIES, 'r') as f:
@@ -74,8 +74,9 @@ def eval(params:dict):
             X, y = X.to(DEVICE), y.to(DEVICE)
             pred = model(X)
             pred = pred.sigmoid()
-            pred[pred >= P] = 1
-            pred[pred < P] = 0
+            if P is not None:
+                pred[pred >= P] = 1
+                pred[pred < P] = 0
             # gen annotation
             pred_mask = pred.detach().cpu().squeeze().numpy()
             anns = mask2ann(pred_mask, image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
