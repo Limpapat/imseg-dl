@@ -69,8 +69,8 @@ def eval(params:dict):
             X, y = X.to(DEVICE), y.to(DEVICE)
             pred = model(X)
             pred = pred.sigmoid()
-            pred[pred >= 0.5] = 1
-            pred[pred < 0.5] = 0
+            # pred[pred >= 0.5] = 1
+            # pred[pred < 0.5] = 0
             # gen annotation
             pred_mask = pred.detach().cpu().squeeze().numpy()
             anns = mask2ann(pred_mask, image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)

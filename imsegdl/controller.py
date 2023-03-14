@@ -9,6 +9,10 @@ class ImsegDL:
             self.params = json.loads(f.read())
         self.params = {**self.params, **kwarg}
     
+    # TODO
+    def get_dataset(self):
+        pass
+    
     def train_model(self):
         print("-"*40)
         print("--- Start taining: params path is {}".format(self.params_path))
