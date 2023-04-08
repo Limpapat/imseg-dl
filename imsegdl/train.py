@@ -35,6 +35,7 @@ def train(params:dict):
     EARLY_STOPPING_TOLERANCE = params["TRAIN"]["EARLY_STOPPING_TOLERANCE"]
     EARLY_STOPPING_THRESHOLD = params["TRAIN"]["EARLY_STOPPING_THRESHOLD"]
     RESULT_PATH = params["TRAIN"]["RESULT_PATH"]
+    SAVE_ALL_MODELS = params["save_all_models"] if "save_all_models" in params.keys() else False
     TRANSFORM = params["transform"] if "transform" in params.keys() else None
     BATCH_SIZE = params["batch_size"] if "batch_size" in params.keys() else 1
     SHUFFLE = params["shuffle"] if "shuffle" in params.keys() else True
@@ -164,6 +165,24 @@ def train(params:dict):
             print("-"*20)
             best_loss = min(LOSS_VALIDATION_VALS)
             print("----- Best VALIDATION Loss : {}".format(best_loss))
+
+            # save best model
+            if SAVE_ALL_MODELS:
+                best_model_wts = model.state_dict()
+                checkpoint_dict = {
+                    'epoch' : e,
+                    'model_state_dict' : best_model_wts,
+                    'optimizer_state_dict' : optimizer.state_dict(),
+                    'learning_rate' : LEARNING_RATE,
+                    'n_classes' : N_CLASSES,
+                    'version' : VERSION,
+                    'train_loss' : LOSS_TRAIN_VALS,
+                    'val_loss' : LOSS_VALIDATION_VALS
+                    }
+                # save best model
+                filename = "model_e{}.pth".format(str(e))
+                model_saving_path = os.path.join(saving_path, filename)
+                torch.save(checkpoint_dict, model_saving_path)
 
             # save best model
             if cum_loss <= best_loss:
