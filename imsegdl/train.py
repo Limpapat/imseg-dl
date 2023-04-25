@@ -138,7 +138,7 @@ def train(params:dict):
         val_loader = tqdm(val_loader)
         if RES_PLOT:
             fig = plt.gcf()
-            fig.set_size_inches((36//9 + 1) * 9, 12) # TODO : N_VAL
+            fig.set_size_inches((18//9 + 1) * 9, 12) # TODO : N_VAL
         with torch.no_grad():
             for idx, batch in enumerate(val_loader):
                 X, y = batch
@@ -155,7 +155,7 @@ def train(params:dict):
                     for i in range(N_CLASSES):
                         pred_plot += pred_detach[:,i,:,:]
                     if idx < 36:
-                        sp = plt.subplot(36//9, 9, idx+1) # TODO : N_VAL
+                        sp = plt.subplot(18//9, 9, idx+1) # TODO : N_VAL
                         sp.axis('Off')
                         plt.imshow(pred_plot.squeeze().numpy())
             if RES_PLOT:
