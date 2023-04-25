@@ -120,7 +120,7 @@ def train(params:dict):
                 pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                 for i in range(N_CLASSES):
                     pred_plot += pred_detach[:,i,:,:]
-                sp = plt.subplot(N_TRAIN//9, 9, idx+1)
+                sp = plt.subplot(N_TRAIN//10, 10, idx+1)
                 sp.axis('Off')
                 plt.imshow(pred_plot.squeeze().numpy())
         if RES_PLOT:
@@ -153,7 +153,7 @@ def train(params:dict):
                     pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                     for i in range(N_CLASSES):
                         pred_plot += pred_detach[:,i,:,:]
-                    sp = plt.subplot(N_VAL//9, 9, idx+1)
+                    sp = plt.subplot(N_VAL//10, 10, idx+1)
                     sp.axis('Off')
                     plt.imshow(pred_plot.squeeze().numpy())
             if RES_PLOT:
