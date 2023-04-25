@@ -14,7 +14,7 @@ import torch
 import os
 
 class COCODataset(Dataset):
-  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train"):
+  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train", gen_segmentation=False):
     self.root_dir = root_dir
     self.coco = ImsegCOCO(ann_file)
     self.ids = list(sorted(self.coco.imgs.keys()))
@@ -26,6 +26,7 @@ class COCODataset(Dataset):
     if dbtype not in ["train", "test"]:
       raise ValueError("Invalid dbtype: {}".format(dbtype))
     self.dbtype = dbtype
+    self.gen_segmentation = gen_segmentation
 
   def __len__(self):
     return len(self.ids)
@@ -35,6 +36,14 @@ class COCODataset(Dataset):
     ann_ids = self.coco.getAnnIds(imgIds=img_id)
     anns = self.coco.loadAnns(ann_ids)
     target = np.zeros((self.n_classes, self.coco.imgs[img_id]['height'], self.coco.imgs[img_id]['width']), dtype=np.float32)
+
+    nanns = []
+    if self.gen_segmentation:
+      for ann in anns:
+        x1, y1, x2, y2 = ann['bbox']
+        ann["segmentation"] = [[x1,y1,x1,(y1 + y2), (x1 + x2), (y1 + y2), (x1 + x2), y1]]
+        nanns.append(ann)
+      anns = nanns
 
     for ann in anns:
       if ann['category_id'] in self.cats_idx_for_target.keys():
