@@ -102,7 +102,7 @@ def train(params:dict):
         train_loader = tqdm(train_loader)
         if RES_PLOT:
             fig = plt.gcf()
-            fig.set_size_inches((N_TRAIN//9 + 1) * 9, 12)
+            fig.set_size_inches((36//9 + 1) * 9, 12) # TODO : N_TRAIN
         for idx, batch in enumerate(train_loader):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
@@ -120,9 +120,10 @@ def train(params:dict):
                 pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                 for i in range(N_CLASSES):
                     pred_plot += pred_detach[:,i,:,:]
-                sp = plt.subplot(N_TRAIN//10, 10, idx+1)
-                sp.axis('Off')
-                plt.imshow(pred_plot.squeeze().numpy())
+                if idx < 36:
+                    sp = plt.subplot(36//9, 9, idx+1) # TODO : N_TRAIN
+                    sp.axis('Off')
+                    plt.imshow(pred_plot.squeeze().numpy())
         if RES_PLOT:
             plt.savefig(f'{saving_path}/train/train_{e}.png')
             if DISP_PLOT:
@@ -137,7 +138,7 @@ def train(params:dict):
         val_loader = tqdm(val_loader)
         if RES_PLOT:
             fig = plt.gcf()
-            fig.set_size_inches((N_VAL//9 + 1) * 9, 12)
+            fig.set_size_inches((36//9 + 1) * 9, 12) # TODO : N_VAL
         with torch.no_grad():
             for idx, batch in enumerate(val_loader):
                 X, y = batch
@@ -153,9 +154,10 @@ def train(params:dict):
                     pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                     for i in range(N_CLASSES):
                         pred_plot += pred_detach[:,i,:,:]
-                    sp = plt.subplot(N_VAL//10, 10, idx+1)
-                    sp.axis('Off')
-                    plt.imshow(pred_plot.squeeze().numpy())
+                    if idx < 36:
+                        sp = plt.subplot(36//9, 9, idx+1) # TODO : N_VAL
+                        sp.axis('Off')
+                        plt.imshow(pred_plot.squeeze().numpy())
             if RES_PLOT:
                 plt.savefig(f'{saving_path}/val/val_{e}.png')
                 if DISP_PLOT:
