@@ -154,7 +154,7 @@ def train(params:dict):
                     pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                     for i in range(N_CLASSES):
                         pred_plot += pred_detach[:,i,:,:]
-                    if idx < 36:
+                    if idx < 18:
                         sp = plt.subplot(18//9, 9, idx+1) # TODO : N_VAL
                         sp.axis('Off')
                         plt.imshow(pred_plot.squeeze().numpy())
