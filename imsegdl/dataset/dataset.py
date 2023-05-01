@@ -75,6 +75,8 @@ class COCODataset(Dataset):
     """
       This function isn't accepted for evaluation !
     """
+
+    print(f"===== {self.samples(idx)} =====")
     img_id = self.ids[idx]
     img = self.coco.loadImgs(img_id)[0]
     img_path = f'{self.root_dir}/{img["file_name"]}'
@@ -86,6 +88,5 @@ class COCODataset(Dataset):
     fig, ax = plt.subplots(figsize=(10,10))
     ax.imshow(image)
     self.coco.showAnns(anns, draw_bbox=draw_bbox)
-    fig.suptitle(self.samples(idx), fontsize=16)
-    # plt.axis('off')
+    plt.axis('off')
     plt.show()
