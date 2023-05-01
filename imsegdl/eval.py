@@ -39,6 +39,7 @@ def eval(params:dict):
     DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
     RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
     P = params['p'] if "p" in params.keys() else None
+    GEN_SEG = params["gen_segmentation"] if "gen_segmentation" in params.keys() else False
 
     # create empty _annotation.coco.json
     with open(CATEGORIES, 'r') as f:
@@ -48,7 +49,7 @@ def eval(params:dict):
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None
-    test_dataset = COCODataset(TEST_DIR, TEST_ANN_FILE, categories_path=CATEGORIES, transforms=transform, dbtype="test")
+    test_dataset = COCODataset(TEST_DIR, TEST_ANN_FILE, categories_path=CATEGORIES, transforms=transform, dbtype="test", gen_segmentation=GEN_SEG)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
     # load trained model
