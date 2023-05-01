@@ -113,8 +113,10 @@ def eval(params:dict):
                     sp.axis('Off')
                     plt.imshow(pred_detach[:,i,:,:].squeeze().numpy())
                     plt.title(f"class {i}")
-                plt.savefig(f'{saving_path}/eval_{idx}.png')
+                sample_fname, _ = test_loader.dataset.samples[idx]
+                plt.savefig(f'{saving_path}/eval_{idx}_{sample_fname}.png')
                 if DISP_PLOT:
+                    print(sample_fname)
                     plt.show()
     # update & save _annotation.coco.json
     with open(TEST_ANN_FILE, 'r') as f:

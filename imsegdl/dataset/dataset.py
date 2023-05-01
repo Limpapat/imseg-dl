@@ -66,6 +66,11 @@ class COCODataset(Dataset):
 
     return image, target
   
+  def samples(self, idx):
+    img_id = self.ids[idx]
+    img = self.coco.loadImgs(img_id)[0]
+    return img["file_name"]
+  
   def disp(self, idx, draw_bbox=False):
     """
       This function isn't accepted for evaluation !
