@@ -86,6 +86,6 @@ class COCODataset(Dataset):
     fig, ax = plt.subplots(figsize=(10,10))
     ax.imshow(image)
     self.coco.showAnns(anns, draw_bbox=draw_bbox)
-    plt.title(self.samples(idx))
+    ax.title(self.samples(idx))
     plt.axis('off')
     plt.show()
