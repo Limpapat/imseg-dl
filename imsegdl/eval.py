@@ -113,7 +113,7 @@ def eval(params:dict):
                     sp.axis('Off')
                     plt.imshow(pred_detach[:,i,:,:].squeeze().numpy())
                     plt.title(f"class {i}")
-                sample_fname, _ = test_loader.dataset.samples[idx]
+                sample_fname = test_loader.dataset.samples(idx)
                 plt.savefig(f'{saving_path}/eval_{idx}_{sample_fname}.png')
                 if DISP_PLOT:
                     print(sample_fname)
