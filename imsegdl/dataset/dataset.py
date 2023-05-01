@@ -76,7 +76,7 @@ class COCODataset(Dataset):
       This function isn't accepted for evaluation !
     """
 
-    print(f"===== {self.samples(idx)} =====")
+    print(f"======= {self.samples(idx)} =======")
     img_id = self.ids[idx]
     img = self.coco.loadImgs(img_id)[0]
     img_path = f'{self.root_dir}/{img["file_name"]}'
