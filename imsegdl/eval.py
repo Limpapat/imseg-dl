@@ -40,12 +40,18 @@ def eval(params:dict):
     RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
     P = params['p'] if "p" in params.keys() else None
     GEN_SEG = params["gen_segmentation"] if "gen_segmentation" in params.keys() else False
+    IMFORMAT = params["imformat"] if "imformat" in params.keys() else "png"
 
     # create empty _annotation.coco.json
     with open(CATEGORIES, 'r') as f:
         cats = json.loads(f.read())
     now = datetime.now()
-    gen_empty_annf(root_dir=TEST_DIR,ann_dir=TEST_ANN_FILE, version=VERSION, stamp=now.strftime("%Y-%m-%dT%H:%M:%S+00:00"), cats=cats)
+    gen_empty_annf(root_dir=TEST_DIR,
+                   ann_dir=TEST_ANN_FILE, 
+                   version=VERSION, 
+                   stamp=now.strftime("%Y-%m-%dT%H:%M:%S+00:00"), 
+                   cats=cats,
+                   imformat=IMFORMAT)
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None
