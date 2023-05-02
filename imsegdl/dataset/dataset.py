@@ -14,9 +14,9 @@ import torch
 import os
 
 class COCODataset(Dataset):
-  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train", gen_segmentation=False):
+  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train", gen_segmentation=False, cs:dict={}):
     self.root_dir = root_dir
-    self.coco = ImsegCOCO(ann_file)
+    self.coco = ImsegCOCO(annotation_file=ann_file, cs=cs)
     self.ids = list(sorted(self.coco.imgs.keys()))
     self.transforms = transforms
     self.categories = load_categories_json(categories_path) if categories_path else self.coco.categories

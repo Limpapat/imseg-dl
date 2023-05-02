@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class ImsegCOCO(COCO):
-  def __init__(self, annotation_file=None):
+  def __init__(self, annotation_file=None, cs:dict={}):
     super(ImsegCOCO, self).__init__(annotation_file)
     self.categories = self.dataset['categories']
-    self.cs = {i['id']:(np.random.random((1, 3))*0.6+0.4).tolist()[0] for i in self.categories}
+    self.cs = cs if bool(cs) else {i['id']:(np.random.random((1, 3))*0.6+0.4).tolist()[0] for i in self.categories}
   
   def showAnns(self, anns, draw_bbox=False):
         """
