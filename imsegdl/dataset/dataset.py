@@ -37,7 +37,11 @@ class COCODataset(Dataset):
     img_id = self.ids[idx]
     ann_ids = self.coco.getAnnIds(imgIds=img_id)
     anns = self.coco.loadAnns(ann_ids)
-    target = np.zeros((self.n_classes, self.coco.imgs[img_id]['height'], self.coco.imgs[img_id]['width']), dtype=np.float32)
+    image_path = os.path.join(self.root_dir, self.coco.loadImgs(img_id)[0]['file_name'])
+    image = Image.open(image_path).convert('RGB')
+    image = np.array(image)
+    image = to_tensor(image)
+    target = np.zeros((self.n_classes, image.shape[-2], image.shape[-1]), dtype=np.float32)
 
     if self.ptype == "object_detection":
       for ann in anns:
@@ -47,7 +51,6 @@ class COCODataset(Dataset):
           mask = np.zeros((self.coco.imgs[img_id]['height'], self.coco.imgs[img_id]['width']), dtype=np.float32)
           mask[bb_array[0]:bb_array[2], bb_array[1]:bb_array[3]] = 1.
           target[self.cats_idx_for_target[ann['category_id']]] += mask
-          # ann["segmentation"] = [[x1,y1,x1,(y1 + y2), (x1 + x2), (y1 + y2), (x1 + x2), y1]]
     elif self.ptype == "segmentation":
       for ann in anns:
         if ann['category_id'] in self.cats_idx_for_target.keys():
@@ -57,16 +60,11 @@ class COCODataset(Dataset):
       pass
 
     target[target > 1] = 1
-    image_path = os.path.join(self.root_dir, self.coco.loadImgs(img_id)[0]['file_name'])
-    image = Image.open(image_path).convert('RGB')
-
     target = torch.as_tensor(target, dtype=torch.long)
     if self.transforms:
       image = self.transforms(image)
       target = self.transforms(target)
     
-    image = np.array(image)
-    image = to_tensor(image)
     if self.dbtype == "test":
       save_image(image, image_path)
 
