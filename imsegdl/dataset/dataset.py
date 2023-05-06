@@ -48,7 +48,7 @@ class COCODataset(Dataset):
         if ann['category_id'] in self.cats_idx_for_target.keys():
           x, y, w, h = ann['bbox']
           bb_array = np.array([x,y,w,h]).astype(np.int32)
-          mask = np.zeros((self.coco.imgs[img_id]['height'], self.coco.imgs[img_id]['width']), dtype=np.float32)
+          mask = np.zeros((image.shape[-2], image.shape[-1]), dtype=np.float32)
           mask[bb_array[0]:bb_array[2], bb_array[1]:bb_array[3]] = 1.
           target[self.cats_idx_for_target[ann['category_id']]] += mask
     elif self.ptype == "segmentation":
