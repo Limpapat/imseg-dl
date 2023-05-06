@@ -8,6 +8,7 @@ from imsegdl.dataset.imsegcoco import ImsegCOCO
 from imsegdl.utils.utils import load_categories_json
 from torchvision.transforms.functional import to_tensor
 from torchvision.utils import save_image
+import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -75,20 +76,34 @@ class COCODataset(Dataset):
     img = self.coco.loadImgs(img_id)[0]
     return img["file_name"]
   
-  def disp(self, idx, draw_bbox=False):
-    """
-      This function isn't accepted for evaluation !
-    """
-
+  def draw_bbox(self, idx):
     print(f"======= {self.samples(idx)} =======")
     img_id = self.ids[idx]
     img = self.coco.loadImgs(img_id)[0]
     img_path = f'{self.root_dir}/{img["file_name"]}'
-
     image = Image.open(img_path).convert('RGB')
     ann_ids = self.coco.getAnnIds(imgIds=img['id'])
     anns = self.coco.loadAnns(ann_ids)
-
+    fig, ax = plt.subplots()
+    # Draw boxes and add label to each box
+    for ann in anns:
+        box = ann['bbox']
+        bb = patches.Rectangle((box[0],box[1]), box[2],box[3], linewidth=2, edgecolor="blue", facecolor="none")
+        ax.add_patch(bb)
+    ax.imshow(image)
+    plt.show()
+  
+  def disp(self, idx, draw_bbox=False):
+    """
+      This function isn't accepted for evaluation !
+    """
+    print(f"======= {self.samples(idx)} =======")
+    img_id = self.ids[idx]
+    img = self.coco.loadImgs(img_id)[0]
+    img_path = f'{self.root_dir}/{img["file_name"]}'
+    image = Image.open(img_path).convert('RGB')
+    ann_ids = self.coco.getAnnIds(imgIds=img['id'])
+    anns = self.coco.loadAnns(ann_ids)
     fig, ax = plt.subplots(figsize=(10,10))
     ax.imshow(image)
     self.coco.showAnns(anns, draw_bbox=draw_bbox)
