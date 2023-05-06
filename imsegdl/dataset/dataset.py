@@ -87,10 +87,12 @@ class COCODataset(Dataset):
     fig, ax = plt.subplots()
     # Draw boxes and add label to each box
     for ann in anns:
+        color = self.coco.cs[ann['category_id']]
         box = ann['bbox']
-        bb = patches.Rectangle((box[0],box[1]), box[2],box[3], linewidth=2, edgecolor="blue", facecolor="none")
+        bb = patches.Rectangle((box[0],box[1]), box[2],box[3], linewidth=2, edgecolor=color, facecolor="none")
         ax.add_patch(bb)
     ax.imshow(image)
+    ax.axis('off')
     plt.show()
   
   def disp(self, idx, draw_bbox=False):
