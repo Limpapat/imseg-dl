@@ -43,14 +43,14 @@ def train(params:dict):
     LEARNING_RATE = params["learning_rate"] if "learning_rate" in params.keys() else 0.005
     DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
     RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
-    GEN_SEG = params["gen_segmentation"] if "gen_segmentation" in params.keys() else False
+    PTYPE = params["ptype"] if "ptype" in params.keys() else "segmentation"
     PRETRAINED_MODEL = params["pretrained_model"] if "pretrained_model" in params.keys() else None
     checkpoint = torch.load(PRETRAINED_MODEL, map_location=torch.device(DEVICE)) if PRETRAINED_MODEL else {}
     INIT_EPOCHS = checkpoint['epoch'] + 1 if PRETRAINED_MODEL else 1
 
     # load dataset
-    train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, gen_segmentation=GEN_SEG)
-    val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, gen_segmentation=GEN_SEG)
+    train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE)
+    val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE)
     N_CLASSES = checkpoint['n_classes'] if PRETRAINED_MODEL else train_dataset.n_classes
     VERSION = train_dataset.version
     print("-"*40)
