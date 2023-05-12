@@ -57,10 +57,12 @@ class COCODataset(Dataset):
         if ann['category_id'] in self.cats_idx_for_target.keys():
           mask = self.coco.annToMask(ann).astype(np.float32)
           target[self.cats_idx_for_target[ann['category_id']]] += mask
+          target[0] += mask
     else:
       pass
 
     target[target > 1] = 1
+    target[0] = -1 * (target[0] - 1)
     target = torch.as_tensor(target, dtype=torch.long)
     if self.transforms:
       image = self.transforms(image)
