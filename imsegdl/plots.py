@@ -22,7 +22,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset)->dict:
         anns = ds.coco.loadAnns(ann_ids)
         fig1, ax1 = plt.subplots(figsize=(10,10))
         ax1.imshow(Image.open(f'{ds.root_dir}/{img["file_name"]}').convert('RGB'))
-        ds.coco.showAnns(anns, draw_bbox=True)
+        ds.coco.showAnns(anns, draw_bbox=False)
         plt.title(f"======= {ds.samples(idx)} =======")
 
         # gt_ds
@@ -33,7 +33,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset)->dict:
         anns = gt_ds.coco.loadAnns(ann_ids)
         fig2, ax2 = plt.subplots(figsize=(10,10))
         ax2.imshow(Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB'))
-        gt_ds.coco.showAnns(anns, draw_bbox=False)
+        gt_ds.coco.showAnns(anns, draw_bbox=True)
         plt.title(f"======= {gt_ds.samples(_mapping[idx])} =======")
     plt.show()
     return _mapping
