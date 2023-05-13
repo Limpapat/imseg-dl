@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from datetime import datetime
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import torch.nn as nn
 import argparse
 import torch
 import json
@@ -81,7 +82,9 @@ def eval(params:dict):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
             pred = model(X)
-            pred = pred.sigmoid()
+            pred = nn.Softmax(pred, dim=1)
+            print(torch.sum(pred, dim=1))
+            # pred = pred.sigmoid()
             if P is not None:
                 pred[pred >= P] = 1
                 pred[pred < P] = 0
