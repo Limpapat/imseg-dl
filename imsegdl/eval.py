@@ -84,8 +84,8 @@ def eval(params:dict):
             pred = model(X)
             sf = nn.Softmax(dim=1)
             pred = sf(pred)
-            pred_argmax = torch.argmax(pred, dim=0, keepdims=True)
-            pred = torch.zeros_like(pred).scatter_(0, pred_argmax, 1)
+            pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
+            pred = torch.zeros_like(pred).scatter_(1, pred_argmax, 1)
             # print(torch.sum(pred, dim=1))
             # pred = pred.sigmoid()
             if P is not None:
