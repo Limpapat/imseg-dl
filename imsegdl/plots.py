@@ -1,3 +1,4 @@
+from PIL import Image
 from imsegdl.dataset.dataset import COCODataset
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -10,6 +11,31 @@ def idxmapping(imgs1:dict, imgs2:dict)->dict:
 
 def plot_test_gt(ds:COCODataset, gt_ds:COCODataset)->dict:
     _mapping = idxmapping(ds.coco.imgs, gt_ds.coco.imgs)
+    fig = plt.gcf()
+    fig.set_size_inches(28, 18)
+    for idx in range(len(ds)):
+        # ds
+        sp1 = plt.subplot(1, 2, 1)
+        sp1.axis('Off')
+        img = ds.coco.loadImgs(ds.ids[idx])[0]
+        ann_ids = ds.coco.getAnnIds(imgIds=img['id'])
+        anns = ds.coco.loadAnns(ann_ids)
+        fig1, ax1 = plt.subplots(figsize=(10,10))
+        ax1.imshow(Image.open(f'{ds.root_dir}/{img["file_name"]}').convert('RGB'))
+        ds.coco.showAnns(anns, draw_bbox=True)
+        plt.title(f"======= {ds.samples(idx)} =======")
+
+        # gt_ds
+        sp2 = plt.subplot(1, 2, 2)
+        sp2.axis('Off')
+        img = gt_ds.coco.loadImgs(gt_ds.ids[_mapping[idx]])[0]
+        ann_ids = gt_ds.coco.getAnnIds(imgIds=img['id'])
+        anns = gt_ds.coco.loadAnns(ann_ids)
+        fig2, ax2 = plt.subplots(figsize=(10,10))
+        ax2.imshow(Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB'))
+        gt_ds.coco.showAnns(anns, draw_bbox=True)
+        plt.title(f"======= {gt_ds.samples(_mapping[idx])} =======")
+    plt.show()
     return _mapping
 
 def plot_cc(ds):
