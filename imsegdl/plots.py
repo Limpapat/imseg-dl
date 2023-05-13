@@ -35,7 +35,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset)->dict:
         ax2.imshow(Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB'))
         gt_ds.coco.showAnns(anns, draw_bbox=True)
         plt.title(f"======= {gt_ds.samples(_mapping[idx])} =======")
-    plt.show()
+        plt.show()
     return _mapping
 
 def plot_cc(ds):
