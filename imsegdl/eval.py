@@ -82,7 +82,8 @@ def eval(params:dict):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
             pred = model(X)
-            pred = nn.Softmax(pred, dim=1)
+            sf = nn.Softmax(dim=1)
+            pred = sf(pred)
             print(torch.sum(pred, dim=1))
             # pred = pred.sigmoid()
             if P is not None:
