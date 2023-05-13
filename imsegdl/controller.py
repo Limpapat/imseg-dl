@@ -1,5 +1,7 @@
 from imsegdl.train import train
 from imsegdl.eval import eval
+from imsegdl.plots import plot_test_gt, plot_cc
+from imsegdl.dataset.dataset import COCODataset
 import json
 
 class ImsegDL:
@@ -27,3 +29,20 @@ class ImsegDL:
         saving_eval_path = eval(self.params)
         print("--- Stop evaluation: results are saved to {}".format(saving_eval_path))
         print("-"*40)
+
+class ComparePlot:
+    def __init__(self, root_dir, ann_dir, ground_truth_ann_dir):
+        self.root_dir = root_dir
+        self.ann_dir = ann_dir
+        self.ground_truth_ann_dir = ground_truth_ann_dir
+        self._gt_dataset = COCODataset(root_dir, ground_truth_ann_dir)
+        self._dataset = COCODataset(root_dir, ann_dir, cs=self._gt_dataset.coco.cs)
+        self.mapping = None
+    
+    @property
+    def show_plot(self):
+        self.mapping = plot_test_gt(self._dataset, self._gt_dataset)
+    
+    @property
+    def show_cc(self):
+        plot_cc(self._dataset)
