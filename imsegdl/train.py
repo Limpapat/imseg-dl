@@ -67,7 +67,7 @@ def train(params:dict):
     model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
 
     # define the loss function and optimizer
-    criterion = nn.CrossEntropyLoss(ignore_index=255)
+    criterion = nn.CrossEntropyLoss()
     # criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     print("-"*40)
