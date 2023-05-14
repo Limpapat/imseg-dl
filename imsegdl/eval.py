@@ -81,12 +81,10 @@ def eval(params:dict):
         for idx, batch in enumerate(tqdm(test_loader)):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
-            pred = model(X)
-            sf = nn.Softmax(dim=1)
-            pred = sf(pred)
+            logits, pred_ = model(X)
+            pred = nn.functional.softmax(logits, dim=1)
             pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
             pred = torch.zeros_like(pred).scatter_(1, pred_argmax, 1)
-            # print(torch.sum(pred, dim=1))
             # pred = pred.sigmoid()
             if P is not None:
                 pred[pred >= P] = 1
@@ -98,6 +96,28 @@ def eval(params:dict):
                 # plot prediction
                 fig = plt.gcf()
                 fig.set_size_inches(28, 18)
+                sp = plt.subplot(1, 2, 1)
+                sp.axis('Off')
+                y_detach = y.detach().cpu()
+                y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
+                for i in range(N_CLASSES):
+                    y_plot += y_detach[:,i,:,:]
+                plt.imshow(y_plot.squeeze().numpy())
+                plt.title("ground truth")
+                sp = plt.subplot(1, 2, 2)
+                sp.axis('Off')
+                pred_detach = pred.detach().cpu()
+                pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
+                for i in range(N_CLASSES):
+                    pred_plot += i*pred_detach[:,i,:,:]
+                plt.imshow(pred_plot.squeeze().numpy())
+                plt.title("pred")
+                sample_fname = test_loader.dataset.samples(idx)
+                plt.savefig(f'{saving_path}/eval_{idx}_{sample_fname}.png')
+                if DISP_PLOT:
+                    print(sample_fname)
+                    plt.show()
+                """
                 sp = plt.subplot(1, 8, 1)
                 sp.axis('Off')
                 y_detach = y.detach().cpu()
@@ -124,6 +144,7 @@ def eval(params:dict):
                 if DISP_PLOT:
                     print(sample_fname)
                     plt.show()
+                """
     # update & save _annotation.coco.json
     with open(TEST_ANN_FILE, 'r') as f:
         annf = json.loads(f.read())

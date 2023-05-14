@@ -67,8 +67,8 @@ def train(params:dict):
     model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
 
     # define the loss function and optimizer
-    # criterion = nn.CrossEntropyLoss()
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = nn.CrossEntropyLoss(ignore_index=255)
+    # criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     print("-"*40)
     print("Construct model : U-net")
@@ -106,7 +106,7 @@ def train(params:dict):
         for idx, batch in enumerate(train_loader):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
-            pred = model(X)
+            logits, pred = model(X)
             loss = criterion(pred, y.float())
             train_loss_vals.append(loss.item())
             optimizer.zero_grad()
@@ -143,7 +143,7 @@ def train(params:dict):
             for idx, batch in enumerate(val_loader):
                 X, y = batch
                 X, y = X.to(DEVICE), y.to(DEVICE)
-                pred = model(X)
+                logits, pred = model(X)
                 val_loss = criterion(pred, y.float())
                 val_loss_vals.append(val_loss.item())
                 if RES_PLOT:
