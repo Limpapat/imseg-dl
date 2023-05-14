@@ -151,7 +151,7 @@ def eval(params:dict):
     annf_annotation = annf['annotations']
     annf_annotation.extend(anns['annotation'])
     annf['annotations'] = annf_annotation
-    with open(TEST_ANN_FILE, 'w') as f:
+    with open("aaa", 'w') as f:
         f.write(json.dumps(annf, indent=4))
     return saving_path
             
