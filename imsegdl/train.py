@@ -169,7 +169,9 @@ def train(params:dict):
                 if DISP_PLOT:
                     plt.show()
             cum_loss = sum(val_loss_vals)/len(val_loss_vals)
+            before_lr = optimizer.param_groups[0]["lr"]
             scheduler.step(cum_loss)
+            after_lr = optimizer.param_groups[0]["lr"]
             LOSS_VALIDATION_VALS.append(cum_loss)
             print("----- VALIDATION Loss : {}".format(LOSS_VALIDATION_VALS[-1]))
             print("-"*20)
@@ -217,6 +219,8 @@ def train(params:dict):
             else:
                 early_stopping_counter = 0
             print("----- Early Stopping : counter: {} - tolerance: {}".format(early_stopping_counter, EARLY_STOPPING_TOLERANCE))
+            if before_lr != after_lr:
+                print("----- Optimizer lr was changed - %.4f -> %.4f" % (before_lr, after_lr))
             
             if (early_stopping_counter == EARLY_STOPPING_TOLERANCE) or (best_loss <= EARLY_STOPPING_THRESHOLD):
                 print("----- Terminating: early stopping: Best loss: {}, Theshold: {}".format(best_loss, EARLY_STOPPING_THRESHOLD))
