@@ -104,7 +104,7 @@ def eval(params:dict):
                 for i in range(N_CLASSES):
                     y_plot += i*y_detach[:,i,:,:]
                     print(i, y_plot[y_plot > 0], y_detach[y_detach > 0])
-                plt.imshow(y_plot.squeeze().numpy())
+                plt.imshow(y_detach[:,0,:,:].squeeze().numpy())
                 plt.title("ground truth")
                 sp = plt.subplot(1, 2, 2)
                 sp.axis('Off')
