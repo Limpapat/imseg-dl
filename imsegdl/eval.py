@@ -62,9 +62,9 @@ def eval(params:dict):
 
     # load trained model
     model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
-    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    # optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     model.load_state_dict(checkpoint['model_state_dict'])
-    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 
     # define saving evaluation results path
     saving_path = os.path.join(RESULT_PATH, "evaluation_{}".format(datetime.now().strftime("%Y%m%d%H%M%S")))
@@ -103,6 +103,7 @@ def eval(params:dict):
                 y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
                 for i in range(N_CLASSES):
                     y_plot += i*y_detach[:,i,:,:]
+                    print(i, y_plot)
                 plt.imshow(y_plot.squeeze().numpy())
                 plt.title("ground truth")
                 sp = plt.subplot(1, 2, 2)
