@@ -43,6 +43,7 @@ def eval(params:dict):
     P = params['p'] if "p" in params.keys() else None
     PTYPE = params["ptype"] if "ptype" in params.keys() else "segmentation"
     IMFORMAT = params["imformat"] if "imformat" in params.keys() else "png"
+    IMAGE_SIZE = params["image_size"] if "image_size" in params.keys() else 512
 
     # create empty _annotation.coco.json
     with open(CATEGORIES, 'r') as f:
@@ -53,7 +54,8 @@ def eval(params:dict):
                    version=VERSION, 
                    stamp=now.strftime("%Y-%m-%dT%H:%M:%S+00:00"), 
                    cats=cats,
-                   imformat=IMFORMAT)
+                   imformat=IMFORMAT,
+                   image_size=IMAGE_SIZE)
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None
@@ -82,14 +84,6 @@ def eval(params:dict):
         for idx, batch in enumerate(tqdm(test_loader)):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
-            #####
-            # print(y.shape)
-            # for i in range(6):
-            #     yi = y[:,i,:,:]
-            #     print(yi[yi > 0])
-            #     plt.imshow(yi.squeeze())
-            #     plt.show()
-            #####
             logits, pred_ = model(X)
             pred = nn.functional.softmax(logits, dim=1)
             pred_argmax = torch.argmax(pred, dim=1, keepdims=True)

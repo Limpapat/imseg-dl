@@ -9,13 +9,13 @@ import glob
 import json
 import os
 
-def gen_images_form(image_id, file_name, date_captured)->dict:
+def gen_images_form(image_id, file_name, date_captured, image_size=512)->dict:
     return {
         'id': image_id,
         'license': 1,
         'file_name': file_name,
-        'height': 512,          # TODO update later
-        'width': 512,           # TODO update later
+        'height': image_size,          # TODO update later
+        'width': image_size,           # TODO update later
         'date_captured': date_captured
     }
 
@@ -60,7 +60,7 @@ def mask2ann(ground_truth_mask:np.array, image_id, cats_idx:dict, annotation:dic
     annotation["last_ann_id"] = ann_id
     return annotation
 
-def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str, cats:list, imformat:str="png"):
+def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str, cats:list, imformat:str="png", image_size:int=512):
     annf = {
         "info" : {
             "year" : stamp.split("-")[0],
@@ -81,7 +81,7 @@ def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str, cats:list,
     }
     imformat = f"*.{imformat}"
     for i, n in enumerate(glob.glob(os.path.join(root_dir,imformat))):
-        annf["images"].append(gen_images_form(i, n.split("/")[-1], stamp))
+        annf["images"].append(gen_images_form(i, n.split("/")[-1], stamp, image_size))
     with open(ann_dir, 'w') as f:
         f.write(json.dumps(annf, indent=4))
 
