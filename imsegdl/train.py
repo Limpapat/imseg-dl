@@ -48,10 +48,11 @@ def train(params:dict):
     PRETRAINED_MODEL = params["pretrained_model"] if "pretrained_model" in params.keys() else None
     checkpoint = torch.load(PRETRAINED_MODEL, map_location=torch.device(DEVICE)) if PRETRAINED_MODEL else {}
     INIT_EPOCHS = checkpoint['epoch'] + 1 if PRETRAINED_MODEL else 1
+    CS = params['cs'] if 'cs' in params.keys() else {}
 
     # load dataset
-    train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE)
-    val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE)
+    train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS)
+    val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS)
     N_CLASSES = checkpoint['n_classes'] if PRETRAINED_MODEL else train_dataset.n_classes
     VERSION = train_dataset.version
     print("-"*40)
@@ -71,7 +72,7 @@ def train(params:dict):
     criterion = nn.CrossEntropyLoss()
     # criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', verbose=True)
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5)
     print("-"*40)
     print("Construct model : U-net")
     print("Construct optimizer : Adam - learning_rate : {}".format(LEARNING_RATE))

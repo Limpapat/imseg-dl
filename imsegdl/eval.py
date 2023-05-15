@@ -44,6 +44,7 @@ def eval(params:dict):
     PTYPE = params["ptype"] if "ptype" in params.keys() else "segmentation"
     IMFORMAT = params["imformat"] if "imformat" in params.keys() else "png"
     IMAGE_SIZE = params["image_size"] if "image_size" in params.keys() else 512
+    CS = params['cs'] if 'cs' in params.keys() else {}
 
     # create empty _annotation.coco.json
     with open(CATEGORIES, 'r') as f:
@@ -59,7 +60,7 @@ def eval(params:dict):
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None
-    test_dataset = COCODataset(TEST_DIR, GROUND_TRUTH_ANN_FILE, categories_path=CATEGORIES, transforms=transform, dbtype="test", ptype=PTYPE)
+    test_dataset = COCODataset(TEST_DIR, GROUND_TRUTH_ANN_FILE, categories_path=CATEGORIES, transforms=transform, dbtype="test", ptype=PTYPE, cs=CS)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     # load trained model

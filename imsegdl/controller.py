@@ -17,7 +17,8 @@ class ImsegDL:
         self.__gen_dataset()
 
     def __gen_dataset(self):
-        self.ground_truth_dataset = COCODataset(self.params["DATASET"]["TEST_DIR"], self.params["DATASET"]["GROUND_TRUTH_ANN_FILE"])
+        cs = self.params['cs'] if 'cs' in self.params.keys() else {}
+        self.ground_truth_dataset = COCODataset(self.params["DATASET"]["TEST_DIR"], self.params["DATASET"]["GROUND_TRUTH_ANN_FILE"], cs=cs)
         self.train_dataset = COCODataset(self.params["DATASET"]["TRAIN_DIR"], self.params["DATASET"]["TRAIN_ANN_FILE"], cs=self.ground_truth_dataset.coco.cs)
         self.val_dataset = COCODataset(self.params["DATASET"]["VAL_DIR"], self.params["DATASET"]["VAL_ANN_FILE"], cs=self.ground_truth_dataset.coco.cs)
         self.test_dataset = COCODataset(self.params["DATASET"]["TEST_DIR"], self.params["DATASET"]["TEST_ANN_FILE"], cs=self.ground_truth_dataset.coco.cs)
