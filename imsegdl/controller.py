@@ -14,13 +14,13 @@ class ImsegDL:
         self.val_dataset = None
         self.test_dataset = None
         self.ground_truth_dataset = None
-        self.gen_dataset()
+        self.__gen_dataset()
 
-    def gen_dataset(self):
+    def __gen_dataset(self):
         self.ground_truth_dataset = COCODataset(self.params["DATASET"]["TEST_DIR"], self.params["DATASET"]["GROUND_TRUTH_ANN_FILE"])
-        self.train_dataset = COCODataset(self.params["DATASET"]["TRAIN_DIR"], "TRAIN_ANN_FILE", cs=self.ground_truth_dataset.coco.cs)
-        self.val_dataset = COCODataset(self.params["DATASET"]["VAL_DIR"], "VAL_ANN_FILE", cs=self.ground_truth_dataset.coco.cs)
-        self.test_dataset = COCODataset(self.params["DATASET"]["TEST_DIR"], "TEST_ANN_FILE", cs=self.ground_truth_dataset.coco.cs)
+        self.train_dataset = COCODataset(self.params["DATASET"]["TRAIN_DIR"], self.params["DATASET"]["TRAIN_ANN_FILE"], cs=self.ground_truth_dataset.coco.cs)
+        self.val_dataset = COCODataset(self.params["DATASET"]["VAL_DIR"], self.params["DATASET"]["VAL_ANN_FILE"], cs=self.ground_truth_dataset.coco.cs)
+        self.test_dataset = COCODataset(self.params["DATASET"]["TEST_DIR"], self.params["DATASET"]["TEST_ANN_FILE"], cs=self.ground_truth_dataset.coco.cs)
     
     def train_model(self):
         print("-"*40)
