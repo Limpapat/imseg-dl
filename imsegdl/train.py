@@ -107,7 +107,7 @@ def train(params:dict):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
             logits, pred = model(X)
-            loss = criterion(pred, y.float())
+            loss = criterion(logits, y.float())
             train_loss_vals.append(loss.item())
             optimizer.zero_grad()
             loss.backward()
@@ -115,7 +115,7 @@ def train(params:dict):
             if RES_PLOT:
                 # plot train prediction
                 pred_detach = pred.detach()
-                pred_detach = pred_detach.sigmoid()
+                # pred_detach = pred_detach.sigmoid()
                 pred_detach = pred_detach.cpu()
                 pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                 for i in range(N_CLASSES):
@@ -144,12 +144,12 @@ def train(params:dict):
                 X, y = batch
                 X, y = X.to(DEVICE), y.to(DEVICE)
                 logits, pred = model(X)
-                val_loss = criterion(pred, y.float())
+                val_loss = criterion(logits, y.float())
                 val_loss_vals.append(val_loss.item())
                 if RES_PLOT:
                     # plot val prediction
                     pred_detach = pred.detach()
-                    pred_detach = pred_detach.sigmoid()
+                    # pred_detach = pred_detach.sigmoid()
                     pred_detach = pred_detach.cpu()
                     pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                     for i in range(N_CLASSES):
