@@ -84,6 +84,12 @@ def eval(params:dict):
         for idx, batch in enumerate(tqdm(test_loader)):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
+            y_detach = y.detach().cpu()
+            y_plot = torch.zeros([1, 1, y_detach.shape[-2], y_detach.shape[-1]])
+            for i in range(6):
+                y_plot += i*y_detach[:,i,:,:]
+            plt.imshow(y_plot.squeeze().numpy())
+            plt.show()
             logits, pred_ = model(X)
             pred = nn.functional.softmax(logits, dim=1)
             pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
