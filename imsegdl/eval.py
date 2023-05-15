@@ -60,109 +60,108 @@ def eval(params:dict):
     test_dataset = COCODataset(TEST_DIR, GROUND_TRUTH_ANN_FILE, categories_path=CATEGORIES, transforms=transform, dbtype="test", ptype=PTYPE)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
-    # # load trained model
-    # model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
-    # # optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-    # model.load_state_dict(checkpoint['model_state_dict'])
-    # # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    # load trained model
+    model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
+    # optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 
-    # # define saving evaluation results path
+    # define saving evaluation results path
     saving_path = os.path.join(RESULT_PATH, "evaluation_{}".format(datetime.now().strftime("%Y%m%d%H%M%S")))
-    # os.mkdir(saving_path)
+    os.mkdir(saving_path)
 
-    # if P is not None:
-    #     print("-"*40)
-    #     print("Filter with probability : {}".format(P))
-    # print("-"*40)
+    if P is not None:
+        print("-"*40)
+        print("Filter with probability : {}".format(P))
+    print("-"*40)
 
-    # # evaluation
-    # model.eval()
-    # anns={"last_ann_id":-1, "annotation":[]}
+    # evaluation
+    model.eval()
+    anns={"last_ann_id":-1, "annotation":[]}
     with torch.no_grad():
         for idx, batch in enumerate(tqdm(test_loader)):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
             #####
-            print(y.shape)
-            for i in range(6):
-                yi = y[:,i,:,:]
-                print(yi[yi > 0])
-                plt.imshow(yi.squeeze())
-                plt.show()
+            # print(y.shape)
+            # for i in range(6):
+            #     yi = y[:,i,:,:]
+            #     print(yi[yi > 0])
+            #     plt.imshow(yi.squeeze())
+            #     plt.show()
             #####
-    #         logits, pred_ = model(X)
-    #         pred = nn.functional.softmax(logits, dim=1)
-    #         pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
-    #         pred = torch.zeros_like(pred).scatter_(1, pred_argmax, 1)
-    #         # pred = pred.sigmoid()
-    #         if P is not None:
-    #             pred[pred >= P] = 1
-    #             pred[pred < P] = 0
-    #         # gen annotation
-    #         pred_mask = pred.detach().cpu().squeeze().numpy()
-    #         anns = mask2ann(pred_mask, image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
-    #         if RES_PLOT:
-    #             # plot prediction
-    #             fig = plt.gcf()
-    #             fig.set_size_inches(28, 18)
-    #             sp = plt.subplot(1, 2, 1)
-    #             sp.axis('Off')
-    #             y_detach = y.detach().cpu()
-    #             y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
-    #             for i in range(N_CLASSES):
-    #                 y_plot += i*y_detach[:,i,:,:]
-    #                 print(i, y_plot[y_plot > 0], y_detach[y_detach > 0])
-    #             plt.imshow(y_detach[:,0,:,:].squeeze().numpy())
-    #             plt.title("ground truth")
-    #             sp = plt.subplot(1, 2, 2)
-    #             sp.axis('Off')
-    #             pred_detach = pred.detach().cpu()
-    #             pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
-    #             for i in range(N_CLASSES):
-    #                 pred_plot += i*pred_detach[:,i,:,:]
-    #             plt.imshow(pred_plot.squeeze().numpy())
-    #             plt.title("pred")
-    #             sample_fname = test_loader.dataset.samples(idx)
-    #             plt.savefig(f'{saving_path}/eval_{idx}_{sample_fname}.png')
-    #             if DISP_PLOT:
-    #                 print(sample_fname)
-    #                 plt.show()
-    #             """
-    #             sp = plt.subplot(1, 8, 1)
-    #             sp.axis('Off')
-    #             y_detach = y.detach().cpu()
-    #             y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
-    #             for i in range(N_CLASSES):
-    #                 y_plot += y_detach[:,i,:,:]
-    #             plt.imshow(y_plot.squeeze().numpy())
-    #             plt.title("ground truth")
-    #             sp = plt.subplot(1, 8, 2)
-    #             sp.axis('Off')
-    #             pred_detach = pred.detach().cpu()
-    #             pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
-    #             for i in range(N_CLASSES):
-    #                 pred_plot += pred_detach[:,i,:,:]
-    #             plt.imshow(pred_plot.squeeze().numpy())
-    #             plt.title("all")
-    #             for i in range(N_CLASSES):
-    #                 sp = plt.subplot(1, 8, 3+i)
-    #                 sp.axis('Off')
-    #                 plt.imshow(pred_detach[:,i,:,:].squeeze().numpy())
-    #                 plt.title(f"class {i}")
-    #             sample_fname = test_loader.dataset.samples(idx)
-    #             plt.savefig(f'{saving_path}/eval_{idx}_{sample_fname}.png')
-    #             if DISP_PLOT:
-    #                 print(sample_fname)
-    #                 plt.show()
-    #             """
-    # # update & save _annotation.coco.json
-    # with open(TEST_ANN_FILE, 'r') as f:
-    #     annf = json.loads(f.read())
-    # annf_annotation = annf['annotations']
-    # annf_annotation.extend(anns['annotation'])
-    # annf['annotations'] = annf_annotation
-    # with open(TEST_ANN_FILE, 'w') as f:
-    #     f.write(json.dumps(annf, indent=4))
+            logits, pred_ = model(X)
+            pred = nn.functional.softmax(logits, dim=1)
+            pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
+            pred = torch.zeros_like(pred).scatter_(1, pred_argmax, 1)
+            # pred = pred.sigmoid()
+            if P is not None:
+                pred[pred >= P] = 1
+                pred[pred < P] = 0
+            # gen annotation
+            pred_mask = pred.detach().cpu().squeeze().numpy()
+            anns = mask2ann(pred_mask, image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
+            if RES_PLOT:
+                # plot prediction
+                fig = plt.gcf()
+                fig.set_size_inches(28, 18)
+                sp = plt.subplot(1, 2, 1)
+                sp.axis('Off')
+                y_detach = y.detach().cpu()
+                y_plot = torch.zeros([1, 1, y_detach.shape[-2], y_detach.shape[-1]])
+                for i in range(6):
+                    y_plot += i*y_detach[:,i,:,:]
+                plt.imshow(y_plot.squeeze().numpy())
+                plt.title("ground truth")
+                sp = plt.subplot(1, 2, 2)
+                sp.axis('Off')
+                pred_detach = pred.detach().cpu()
+                pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
+                for i in range(N_CLASSES):
+                    pred_plot += i*pred_detach[:,i,:,:]
+                plt.imshow(pred_plot.squeeze().numpy())
+                plt.title("pred")
+                sample_fname = test_loader.dataset.samples(idx)
+                plt.savefig(f'{saving_path}/eval_{idx}_{sample_fname}.png')
+                if DISP_PLOT:
+                    print(sample_fname)
+                    plt.show()
+                """
+                sp = plt.subplot(1, 8, 1)
+                sp.axis('Off')
+                y_detach = y.detach().cpu()
+                y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
+                for i in range(N_CLASSES):
+                    y_plot += y_detach[:,i,:,:]
+                plt.imshow(y_plot.squeeze().numpy())
+                plt.title("ground truth")
+                sp = plt.subplot(1, 8, 2)
+                sp.axis('Off')
+                pred_detach = pred.detach().cpu()
+                pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
+                for i in range(N_CLASSES):
+                    pred_plot += pred_detach[:,i,:,:]
+                plt.imshow(pred_plot.squeeze().numpy())
+                plt.title("all")
+                for i in range(N_CLASSES):
+                    sp = plt.subplot(1, 8, 3+i)
+                    sp.axis('Off')
+                    plt.imshow(pred_detach[:,i,:,:].squeeze().numpy())
+                    plt.title(f"class {i}")
+                sample_fname = test_loader.dataset.samples(idx)
+                plt.savefig(f'{saving_path}/eval_{idx}_{sample_fname}.png')
+                if DISP_PLOT:
+                    print(sample_fname)
+                    plt.show()
+                """
+    # update & save _annotation.coco.json
+    with open(TEST_ANN_FILE, 'r') as f:
+        annf = json.loads(f.read())
+    annf_annotation = annf['annotations']
+    annf_annotation.extend(anns['annotation'])
+    annf['annotations'] = annf_annotation
+    with open(TEST_ANN_FILE, 'w') as f:
+        f.write(json.dumps(annf, indent=4))
     return saving_path
             
 
