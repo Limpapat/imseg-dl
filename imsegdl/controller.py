@@ -10,10 +10,17 @@ class ImsegDL:
         with open(params_path, 'r') as f:
             self.params = json.loads(f.read())
         self.params = {**self.params, **kwarg}
-    
-    # TODO
-    def get_dataset(self):
-        pass
+        self.train_dataset = None
+        self.val_dataset = None
+        self.test_dataset = None
+        self.ground_truth_dataset = None
+        self.gen_dataset()
+
+    def gen_dataset(self):
+        self.ground_truth_dataset = COCODataset(self.params["DATASET"]["TEST_DIR"], self.params["DATASET"]["GROUND_TRUTH_ANN_FILE"])
+        self.train_dataset = COCODataset(self.params["DATASET"]["TRAIN_DIR"], "TRAIN_ANN_FILE", cs=self.ground_truth_dataset.coco.cs)
+        self.val_dataset = COCODataset(self.params["DATASET"]["VAL_DIR"], "VAL_ANN_FILE", cs=self.ground_truth_dataset.coco.cs)
+        self.test_dataset = COCODataset(self.params["DATASET"]["TEST_DIR"], "TEST_ANN_FILE", cs=self.ground_truth_dataset.coco.cs)
     
     def train_model(self):
         print("-"*40)
@@ -29,20 +36,12 @@ class ImsegDL:
         saving_eval_path = eval(self.params)
         print("--- Stop evaluation: results are saved to {}".format(saving_eval_path))
         print("-"*40)
-
-class ComparePlot:
-    def __init__(self, root_dir, ann_dir, ground_truth_ann_dir):
-        self.root_dir = root_dir
-        self.ann_dir = ann_dir
-        self.ground_truth_ann_dir = ground_truth_ann_dir
-        self._gt_dataset = COCODataset(root_dir, ground_truth_ann_dir)
-        self._dataset = COCODataset(root_dir, ann_dir, cs=self._gt_dataset.coco.cs)
-        self.mapping = None
     
     @property
     def show_plot(self):
-        self.mapping = plot_test_gt(self._dataset, self._gt_dataset)
+        _mapping = plot_test_gt(self.test_dataset, self.ground_truth_dataset)
+        return _mapping
     
     @property
     def show_cc(self):
-        plot_cc(self._dataset)
+        plot_cc(self.test_dataset)

@@ -40,7 +40,7 @@ def eval(params:dict):
     BATCH_SIZE = params["batch_size"] if "batch_size" in params.keys() else 1
     DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
     RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
-    P = params['p'] if "p" in params.keys() else None
+    # P = params['p'] if "p" in params.keys() else None
     PTYPE = params["ptype"] if "ptype" in params.keys() else "segmentation"
     IMFORMAT = params["imformat"] if "imformat" in params.keys() else "png"
     IMAGE_SIZE = params["image_size"] if "image_size" in params.keys() else 512
@@ -72,9 +72,9 @@ def eval(params:dict):
     saving_path = os.path.join(RESULT_PATH, "evaluation_{}".format(datetime.now().strftime("%Y%m%d%H%M%S")))
     os.mkdir(saving_path)
 
-    if P is not None:
-        print("-"*40)
-        print("Filter with probability : {}".format(P))
+    # if P is not None:
+    #     print("-"*40)
+    #     print("Filter with probability : {}".format(P))
     print("-"*40)
 
     # evaluation
@@ -84,14 +84,14 @@ def eval(params:dict):
         for idx, batch in enumerate(tqdm(test_loader)):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
-            logits, pred_ = model(X)
-            pred = nn.functional.softmax(logits, dim=1)
+            logits = model(X)
+            pred = nn.functional.softmax(logits.detach(), dim=1)
             pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
             pred = torch.zeros_like(pred).scatter_(1, pred_argmax, 1)
             # pred = pred.sigmoid()
-            if P is not None:
-                pred[pred >= P] = 1
-                pred[pred < P] = 0
+            # if P is not None:
+            #     pred[pred >= P] = 1
+            #     pred[pred < P] = 0
             # gen annotation
             pred_mask = pred.detach().cpu().squeeze().numpy()
             anns = mask2ann(pred_mask, image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)

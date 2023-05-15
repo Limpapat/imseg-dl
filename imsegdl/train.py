@@ -106,7 +106,7 @@ def train(params:dict):
         for idx, batch in enumerate(train_loader):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
-            logits, pred = model(X)
+            logits = model(X)
             loss = criterion(logits, y.float())
             train_loss_vals.append(loss.item())
             optimizer.zero_grad()
@@ -114,7 +114,9 @@ def train(params:dict):
             optimizer.step()
             if RES_PLOT:
                 # plot train prediction
-                pred_detach = pred.detach()
+                pred = nn.functional.softmax(logits.detach(), dim=1)
+                pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
+                pred_detach = torch.zeros_like(pred).scatter_(1, pred_argmax, 1)
                 # pred_detach = pred_detach.sigmoid()
                 pred_detach = pred_detach.cpu()
                 pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
@@ -143,12 +145,14 @@ def train(params:dict):
             for idx, batch in enumerate(val_loader):
                 X, y = batch
                 X, y = X.to(DEVICE), y.to(DEVICE)
-                logits, pred = model(X)
+                logits = model(X)
                 val_loss = criterion(logits, y.float())
                 val_loss_vals.append(val_loss.item())
                 if RES_PLOT:
                     # plot val prediction
-                    pred_detach = pred.detach()
+                    pred = nn.functional.softmax(logits.detach(), dim=1)
+                    pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
+                    pred_detach = torch.zeros_like(pred).scatter_(1, pred_argmax, 1)
                     # pred_detach = pred_detach.sigmoid()
                     pred_detach = pred_detach.cpu()
                     pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
