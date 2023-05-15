@@ -87,7 +87,7 @@ def eval(params:dict):
             y_plot = torch.zeros([1, 1, y_detach.shape[-2], y_detach.shape[-1]])
             for i in range(6):
                 y_plot += y_detach[:,i,:,:]
-            plt.imshow(y_plot.squeeze())
+            plt.imshow(y_detach[:,1,:,:].squeeze())
             plt.show()
             #####
     #         logits, pred_ = model(X)
