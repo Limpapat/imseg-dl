@@ -103,8 +103,7 @@ def eval(params:dict):
                 y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
                 for i in range(N_CLASSES):
                     y_plot += i*y_detach[:,i,:,:]
-                    y_plot += 1.
-                    print(i, y_plot[y_plot > 0])
+                    print(i, y_plot[y_plot > 0], y_detach[y_detach > 0])
                 plt.imshow(y_plot.squeeze().numpy())
                 plt.title("ground truth")
                 sp = plt.subplot(1, 2, 2)
