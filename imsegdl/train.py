@@ -5,6 +5,7 @@
 from imsegdl.dataset.dataset import COCODataset
 from imsegdl.model.model import UNet
 from torch.utils.data import DataLoader
+import torch.optim.lr_scheduler as lr_scheduler
 from datetime import datetime
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -70,6 +71,7 @@ def train(params:dict):
     criterion = nn.CrossEntropyLoss()
     # criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', verbose=True)
     print("-"*40)
     print("Construct model : U-net")
     print("Construct optimizer : Adam - learning_rate : {}".format(LEARNING_RATE))
@@ -167,6 +169,7 @@ def train(params:dict):
                 if DISP_PLOT:
                     plt.show()
             cum_loss = sum(val_loss_vals)/len(val_loss_vals)
+            scheduler.step(cum_loss)
             LOSS_VALIDATION_VALS.append(cum_loss)
             print("----- VALIDATION Loss : {}".format(LOSS_VALIDATION_VALS[-1]))
             print("-"*20)
