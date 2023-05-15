@@ -40,7 +40,8 @@ class ImsegDL:
     
     @property
     def show_plot(self):
-        _mapping = plot_test_gt(self.test_dataset, self.ground_truth_dataset)
+        plots_test_save = self.params["plots_test_save"] if "plots_test_save" in self.params.keys() else None
+        _mapping = plot_test_gt(self.test_dataset, self.ground_truth_dataset, plots_test_save=plots_test_save)
         return _mapping
     
     @property

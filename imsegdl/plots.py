@@ -9,7 +9,7 @@ def idxmapping(imgs1:dict, imgs2:dict)->dict:
     klist, vlist = list(imgs2.keys()), list(imgs2.values())
     return {k:klist[vlist.index(v)] for k,v in imgs1.items()}
 
-def plot_test_gt(ds:COCODataset, gt_ds:COCODataset)->dict:
+def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->dict:
     _mapping = idxmapping(ds.coco.imgs, gt_ds.coco.imgs)
     for idx in range(len(ds)):
         fig = plt.gcf()
@@ -33,6 +33,8 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset)->dict:
         sp2.imshow(Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB'))
         gt_ds.coco.showAnns(anns, draw_bbox=True)
         plt.title(f"======= {gt_ds.samples(_mapping[idx])} =======")
+        if plots_test_save is not None:
+            plt.savefig(f'{plots_test_save}/cp_{ds.samples(idx)}.png')
         plt.show()
     return _mapping
 
