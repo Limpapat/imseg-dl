@@ -29,7 +29,7 @@ def eval(params:dict):
     # params setting
     TEST_DIR = params["DATASET"]["TEST_DIR"]
     TEST_ANN_FILE = params["DATASET"]["TEST_ANN_FILE"]
-    GROUND_TRUTH_ANN_FILE = params["DATASET"]["GROUND_TRUTH_ANN_FILE"] if "GROUND_TRUTH_ANN_FILE" in params.keys() else TEST_ANN_FILE
+    GROUND_TRUTH_ANN_FILE = params["DATASET"]["GROUND_TRUTH_ANN_FILE"] if "GROUND_TRUTH_ANN_FILE" in params["DATASET"].keys() else TEST_ANN_FILE
     CATEGORIES = params["EVALUATION"]["CATEGORIES"]
     RESULT_PATH = params["EVALUATION"]["SAVE_PATH"]
     model_path = params["EVALUATION"]["MODEL_PATH"]
@@ -84,12 +84,14 @@ def eval(params:dict):
         for idx, batch in enumerate(tqdm(test_loader)):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
+            #####
             y_detach = y.detach().cpu()
             y_plot = torch.zeros([1, 1, y_detach.shape[-2], y_detach.shape[-1]])
             for i in range(6):
                 y_plot += i*y_detach[:,i,:,:]
             plt.imshow(y_plot.squeeze().numpy())
             plt.show()
+            #####
             logits, pred_ = model(X)
             pred = nn.functional.softmax(logits, dim=1)
             pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
