@@ -83,8 +83,10 @@ def eval(params:dict):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
             #####
-            y_detach = y.detach().cpu()
+            y_detach = y
+            print(y_detach.shape)
             y_detach = y_detach[:,2,:,:]
+            print(y_detach.shape)
             print(y_detach[y_detach > 0])
             # y_plot = torch.zeros([1, 1, y_detach.shape[-2], y_detach.shape[-1]])
             # for i in range(6):
