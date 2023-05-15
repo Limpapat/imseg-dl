@@ -5,7 +5,8 @@
         "TEST_DIR" : "/path/to/test",
         "TRAIN_ANN_FILE" : "/path/to/train/_annotations.coco.json",
         "VAL_ANN_FILE" : "/path/to/valid/_annotations.coco.json",
-        "TEST_ANN_FILE" : "/path/to/test/_annotations.coco.json"
+        "TEST_ANN_FILE" : "/path/to/test/_annotations.coco.json",
+        "GROUND_TRUTH_ANN_FILE" : "/path/to/test/_ground_truth_annotations.coco.json"
     },
     "TRAIN" : {
         "CATEGORIES" : "/path/to/categories.json",

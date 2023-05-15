@@ -29,6 +29,7 @@ def eval(params:dict):
     # params setting
     TEST_DIR = params["DATASET"]["TEST_DIR"]
     TEST_ANN_FILE = params["DATASET"]["TEST_ANN_FILE"]
+    GROUND_TRUTH_ANN_FILE = params["DATASET"]["GROUND_TRUTH_ANN_FILE"] if "GROUND_TRUTH_ANN_FILE" in params.keys() else TEST_ANN_FILE
     CATEGORIES = params["EVALUATION"]["CATEGORIES"]
     RESULT_PATH = params["EVALUATION"]["SAVE_PATH"]
     model_path = params["EVALUATION"]["MODEL_PATH"]
@@ -48,7 +49,7 @@ def eval(params:dict):
         cats = json.loads(f.read())
     now = datetime.now()
     gen_empty_annf(root_dir=TEST_DIR,
-                   ann_dir=TEST_ANN_FILE, 
+                   ann_dir=TEST_ANN_FILE,
                    version=VERSION, 
                    stamp=now.strftime("%Y-%m-%dT%H:%M:%S+00:00"), 
                    cats=cats,
@@ -56,7 +57,7 @@ def eval(params:dict):
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None
-    test_dataset = COCODataset(TEST_DIR, TEST_ANN_FILE, categories_path=CATEGORIES, transforms=transform, dbtype="test", ptype=PTYPE)
+    test_dataset = COCODataset(TEST_DIR, GROUND_TRUTH_ANN_FILE, categories_path=CATEGORIES, transforms=transform, dbtype="test", ptype=PTYPE)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     # load trained model
@@ -101,7 +102,7 @@ def eval(params:dict):
                 y_detach = y.detach().cpu()
                 y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
                 for i in range(N_CLASSES):
-                    y_plot += y_detach[:,i,:,:]
+                    y_plot += i*y_detach[:,i,:,:]
                 plt.imshow(y_plot.squeeze().numpy())
                 plt.title("ground truth")
                 sp = plt.subplot(1, 2, 2)
@@ -151,7 +152,7 @@ def eval(params:dict):
     annf_annotation = annf['annotations']
     annf_annotation.extend(anns['annotation'])
     annf['annotations'] = annf_annotation
-    with open("aaa", 'w') as f:
+    with open(TEST_ANN_FILE, 'w') as f:
         f.write(json.dumps(annf, indent=4))
     return saving_path
             
