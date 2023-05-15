@@ -220,7 +220,7 @@ def train(params:dict):
                 early_stopping_counter = 0
             print("----- Early Stopping : counter: {} - tolerance: {}".format(early_stopping_counter, EARLY_STOPPING_TOLERANCE))
             if before_lr != after_lr:
-                print("----- Optimizer lr was changed - %.4f -> %.4f" % (before_lr, after_lr))
+                print(f"----- Optimizer lr was changed - {before_lr} -> {after_lr}")
             
             if (early_stopping_counter == EARLY_STOPPING_TOLERANCE) or (best_loss <= EARLY_STOPPING_THRESHOLD):
                 print("----- Terminating: early stopping: Best loss: {}, Theshold: {}".format(best_loss, EARLY_STOPPING_THRESHOLD))
