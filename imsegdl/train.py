@@ -121,7 +121,7 @@ def train(params:dict):
                 pred_detach = pred_detach.cpu()
                 pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                 for i in range(N_CLASSES):
-                    pred_plot += pred_detach[:,i,:,:]
+                    pred_plot += i*pred_detach[:,i,:,:]
                 if idx < 36:
                     sp = plt.subplot(36//9, 9, idx+1) # TODO : N_TRAIN
                     sp.axis('Off')
@@ -157,7 +157,7 @@ def train(params:dict):
                     pred_detach = pred_detach.cpu()
                     pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
                     for i in range(N_CLASSES):
-                        pred_plot += pred_detach[:,i,:,:]
+                        pred_plot += i*pred_detach[:,i,:,:]
                     if idx < 18:
                         sp = plt.subplot(18//9, 9, idx+1) # TODO : N_VAL
                         sp.axis('Off')
