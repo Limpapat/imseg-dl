@@ -14,7 +14,6 @@ class ImsegDL:
         self.val_dataset = None
         self.test_dataset = None
         self.ground_truth_dataset = None
-        self.__gen_dataset()
 
     def __gen_dataset(self):
         cs = self.params['cs'] if 'cs' in self.params.keys() else {}
@@ -40,10 +39,14 @@ class ImsegDL:
     
     @property
     def show_plot(self):
+        if self.test_dataset is None or self.ground_truth_dataset is None:
+            self.__gen_dataset()
         plots_test_save = self.params["plots_test_save"] if "plots_test_save" in self.params.keys() else None
         _mapping = plot_test_gt(self.test_dataset, self.ground_truth_dataset, plots_test_save=plots_test_save)
         return _mapping
     
     @property
     def show_cc(self):
+        if self.test_dataset is None:
+            self.__gen_dataset()
         plot_cc(self.test_dataset)
