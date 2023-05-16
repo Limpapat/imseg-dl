@@ -32,7 +32,7 @@ def eval(params:dict):
     GROUND_TRUTH_ANN_FILE = params["DATASET"]["GROUND_TRUTH_ANN_FILE"] if "GROUND_TRUTH_ANN_FILE" in params["DATASET"].keys() else TEST_ANN_FILE
     CATEGORIES = params["EVALUATION"]["CATEGORIES"]
     RESULT_PATH = params["EVALUATION"]["SAVE_PATH"]
-    model_path = params["EVALUATION"]["MODEL_PATH"]
+    model_path = params["model_path"] if "model_path" in params.keys() else params["EVALUATION"]["MODEL_PATH"]
     checkpoint = torch.load(model_path, map_location=torch.device(DEVICE))
     N_CLASSES = checkpoint['n_classes']
     LEARNING_RATE = checkpoint['learning_rate']
