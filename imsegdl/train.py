@@ -81,7 +81,7 @@ def train(params:dict):
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5)
     print("-"*40)
     print("Construct model : U-net")
-    print("Construct optimizer : {} - learning_rate : {}".format(optimizer.__name__, LEARNING_RATE))
+    print("Construct optimizer : {} - learning_rate : {}".format(optimizer.__class__.__name__, LEARNING_RATE))
     print("Define criterion : BCEWithLogitsLoss")
 
     # load pre-trained model
