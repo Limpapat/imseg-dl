@@ -97,6 +97,7 @@ def train(params:dict):
     os.mkdir(saving_path)
     os.mkdir(os.path.join(saving_path, "train"))
     os.mkdir(os.path.join(saving_path, "val"))
+    os.mkdir(os.path.join(saving_path, "test"))
 
     # train
     print("-"*40)

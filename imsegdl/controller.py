@@ -29,12 +29,37 @@ class ImsegDL:
         message = "trained model is saved to {}".format(trained_model_path) if trained_model_path is not None else "there is no better model saved"
         print("--- Stop taining: {}".format(message))
         print("-"*40)
+        return trained_model_path
     
     def eval_model(self):
         print("-"*40)
         print("--- Start evaluation: trained model path is {}".format(self.params["EVALUATION"]["MODEL_PATH"]))
         saving_eval_path = eval(self.params)
         print("--- Stop evaluation: results are saved to {}".format(saving_eval_path))
+        print("-"*40)
+        return saving_eval_path
+    
+    @property
+    def train_eval_model(self):
+        print("-"*40)
+        print("--- Start train & eval")
+        print("-"*40)
+        trained_model_path = self.train_model()
+        root_trained_model_path = trained_model_path.split("/")[0:-1]
+        print("-"*40)
+        print("--- Train DONE")
+        print("-"*40)
+        self.params["EVALUATION"]["MODEL_PATH"] = trained_model_path
+        self.params["EVALUATION"]["SAVE_PATH"] = "/".join(root_trained_model_path)
+        self.params["plots_test_save"] = f"{root_trained_model_path}/test"
+        self.params["DATASET"]["TEST_ANN_FILE"] = f"{root_trained_model_path}/_annotations.coco.json",
+        saving_eval_path = self.eval_model()
+        print("-"*40)
+        print("--- Eval DONE")
+        print("-"*40)
+        self.show_plot
+        print("-"*40)
+        print("--- Stop train & eval")
         print("-"*40)
     
     @property
