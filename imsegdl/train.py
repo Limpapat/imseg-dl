@@ -49,6 +49,7 @@ def train(params:dict):
     checkpoint = torch.load(PRETRAINED_MODEL, map_location=torch.device(DEVICE)) if PRETRAINED_MODEL else {}
     INIT_EPOCHS = checkpoint['epoch'] + 1 if PRETRAINED_MODEL else 1
     CS = params['cs'] if 'cs' in params.keys() else {}
+    OPTIM_TYPE = params['optimizer'] if 'optimizer' in params.keys() else 'adam'
 
     # load dataset
     train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS)
@@ -71,7 +72,12 @@ def train(params:dict):
     # define the loss function and optimizer
     criterion = nn.CrossEntropyLoss()
     # criterion = nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    if OPTIM_TYPE.lower() == 'adam':
+        optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    elif OPTIM_TYPE.lower() == 'sgd':
+        optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
+    else:
+        raise ValueError(f"Incorrect optimization : {OPTIM_TYPE} found")
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5)
     print("-"*40)
     print("Construct model : U-net")
