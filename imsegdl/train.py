@@ -75,7 +75,7 @@ def train(params:dict):
     if OPTIM_TYPE.lower() == 'adam':
         optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     elif OPTIM_TYPE.lower() == 'sgd':
-        optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
+        optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.99)
     else:
         raise ValueError(f"Incorrect optimization : {OPTIM_TYPE} found")
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5)
