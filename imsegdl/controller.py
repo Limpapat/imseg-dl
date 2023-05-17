@@ -52,7 +52,7 @@ class ImsegDL:
         self.params["EVALUATION"]["MODEL_PATH"] = trained_model_path
         self.params["EVALUATION"]["SAVE_PATH"] = "/".join(root_trained_model_path)
         self.params["plots_test_save"] = f"{root_trained_model_path}/test"
-        self.params["DATASET"]["TEST_ANN_FILE"] = f"{root_trained_model_path}/_annotations.coco.json",
+        self.params["DATASET"]["TEST_ANN_FILE"] = f"{root_trained_model_path}/_annotations.coco.json"
         saving_eval_path = self.eval_model()
         print("-"*40)
         print("--- Eval DONE")
