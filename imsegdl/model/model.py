@@ -49,7 +49,7 @@ class OutConv(nn.Module):
         return self.conv(x)
 
 class UNet(nn.Module):
-    def __init__(self, n_channels, n_classes):
+    def __init__(self, n_channels, n_classes, init_weights:bool=True):
         super().__init__()
         self.n_channels = n_channels
         self.n_classes = n_classes
@@ -63,7 +63,8 @@ class UNet(nn.Module):
         self.up3 = Up(256, 128)
         self.up4 = Up(128, 64)
         self.outc = OutConv(64, n_classes)
-        self.apply(self._init_weights)
+        if init_weights:
+            self.apply(self._init_weights)
 
     def _init_weights(self, module):
         if isinstance(module, nn.Conv2d) or isinstance(module, nn.ConvTranspose2d):
