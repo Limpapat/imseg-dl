@@ -50,6 +50,7 @@ def train(params:dict):
     INIT_EPOCHS = checkpoint['epoch'] + 1 if PRETRAINED_MODEL else 1
     CS = params['cs'] if 'cs' in params.keys() else {}
     OPTIM_TYPE = params['optimizer'] if 'optimizer' in params.keys() else 'adam'
+    CLASS_WEIGHT = params['class_weight'] if 'class_weight' in params.keys() else []
 
     # load dataset
     train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS)
@@ -70,7 +71,8 @@ def train(params:dict):
     model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
 
     # define the loss function and optimizer
-    criterion = nn.CrossEntropyLoss()
+    weights = torch.tensor(CLASS_WEIGHT).cuda(DEVICE) if len(CLASS_WEIGHT) > 0 else None # adding class weight for imbanlance training dataset
+    criterion = nn.CrossEntropyLoss(weight=weights)
     # criterion = nn.BCEWithLogitsLoss()
     if OPTIM_TYPE.lower() == 'adam':
         optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
