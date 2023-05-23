@@ -2,6 +2,7 @@
 # updated : 04-03-2023
 # version : v1.0
 
+from math import sqrt
 import torch.nn as nn
 import torch
 
@@ -50,10 +51,6 @@ class OutConv(nn.Module):
 class UNet(nn.Module):
     def __init__(self, n_channels, n_classes):
         super().__init__()
-        self.sequential_module = []
-        self.nonsequential_module = []
-        self.conv2d_modules = []
-        self.convT2d_modules = []
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.inc = DoubleConv(n_channels, 64)
@@ -69,16 +66,12 @@ class UNet(nn.Module):
         self.apply(self._init_weights)
 
     def _init_weights(self, module):
-        if isinstance(module, nn.Conv2d):
-            self.conv2d_modules.append(module)
-            print("conv2d: ", module.weight.data.shape, module.bias.data.shape)
-        if isinstance(module, nn.ConvTranspose2d):
-            self.convT2d_modules.append(module)
-            print("convT2d: ", module.weight.data.shape, module.bias.data.shape)
-        if isinstance(module, nn.Sequential):
-            self.sequential_module.append(module)
-        else:
-            self.nonsequential_module.append(module)
+        if isinstance(module, nn.Conv2d) or isinstance(module, nn.ConvTranspose2d):
+            _, f, k1, k2 = module.weight.data.shape
+            N = sqrt(2/(f*k1*k2))
+            module.weight.data.normal_(0., N)
+            if module.bias is not None:
+                module.bias.data.zero_()
 
     def forward(self, x):
         x1 = self.inc(x)
