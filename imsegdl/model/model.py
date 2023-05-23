@@ -50,6 +50,8 @@ class OutConv(nn.Module):
 class UNet(nn.Module):
     def __init__(self, n_channels, n_classes):
         super().__init__()
+        self.sequential_module = []
+        self.nonsequential_module = []
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.inc = DoubleConv(n_channels, 64)
@@ -65,8 +67,6 @@ class UNet(nn.Module):
         self.apply(self._init_weights)
 
     def _init_weights(self, module):
-        self.sequential_module = []
-        self.nonsequential_module = []
         if isinstance(module, nn.Sequential):
             self.sequential_module.append(module)
         else:
