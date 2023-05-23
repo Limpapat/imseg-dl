@@ -62,6 +62,11 @@ class UNet(nn.Module):
         self.up3 = Up(256, 128)
         self.up4 = Up(128, 64)
         self.outc = OutConv(64, n_classes)
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        print(module)
+
     def forward(self, x):
         x1 = self.inc(x)
         x2 = self.down1(x1)
