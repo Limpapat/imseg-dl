@@ -1,30 +1,25 @@
 # imseg-dl
 multi-classes instance segmentation
 
-# TOTO
-- Write reable short document Lol
-
 # Installation & Example
 - By pip
 ```bash
 pip install "git+https://github.com/Limpapat/imseg-dl.git#egg=imsegdl"
 ```
-Then create a python file:
+Here is the pseudo-code to run the demo for imseg-dl package:
 ```python
-from imsegdl.imsegdl import ImsegDL
-imdl = ImsegDL("/path/to/params.json")
-imdl.train_model()
-# or
-imdl.eval_model()
-```
-- By clone this repo
-```bash
-git clone https://github.com/Limpapat/imseg-dl.git
-cd /path/to/imseg-dl
-pip install -r ./requirements.txt
-cd ./imsegdl
-python3 train.py --params /path/to/params.json
-# or
-python3 eval.py --params /path/to/params.json
+from imsegdl.controller import ImsegDL
+
+# Imseg setting up
+ims = ImsegDL("/path/to/params.json",
+              imformat="jpg",
+              image_size=512,
+              optimizer = 'adam',
+              learning_rate = 0.001,
+              init_weights = True,
+              disp_plot=False, res_plot=True)
+
+# Train & Evaluate the model
+ims.train_eval_model
 ```
 
