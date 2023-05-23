@@ -65,10 +65,12 @@ class UNet(nn.Module):
         self.apply(self._init_weights)
 
     def _init_weights(self, module):
+        self.sequential_module = []
+        self.nonsequential_module = []
         if isinstance(module, nn.Sequential):
-            print(module)
+            self.sequential_module.append(module)
         else:
-            print("!!!")
+            self.nonsequential_module.append(module)
 
     def forward(self, x):
         x1 = self.inc(x)
