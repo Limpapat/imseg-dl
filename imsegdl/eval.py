@@ -4,8 +4,8 @@
 
 from imsegdl.utils.utils import gen_empty_annf, mask2ann
 from imsegdl.dataset.dataset import COCODataset
-from imsegdl.model.model import UNet
 from torch.utils.data import DataLoader
+from imsegdl.model import UNet
 from datetime import datetime
 from tqdm import tqdm
 import matplotlib.pyplot as plt
