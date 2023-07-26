@@ -52,10 +52,11 @@ def train(params:dict):
     OPTIM_TYPE = params['optimizer'] if 'optimizer' in params.keys() else 'adam'
     CLASS_WEIGHT = params['class_weight'] if 'class_weight' in params.keys() else []
     INIT_WEIGHTS = params['init_weights'] if 'init_weights' in params.keys() else False
+    PAD = params['pad'] if 'pad' in params.keys() else 0
 
     # load dataset
-    train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS)
-    val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS)
+    train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS, pad=PAD)
+    val_dataset = COCODataset(VAL_DIR, VAL_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS, pad=PAD)
     N_CLASSES = checkpoint['n_classes'] if PRETRAINED_MODEL else train_dataset.n_classes
     VERSION = train_dataset.version
     print("-"*40)
