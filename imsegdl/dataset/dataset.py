@@ -119,13 +119,9 @@ class COCODataset(Dataset):
 
   def clean_overlapping_pixel(self, tar:torch.Tensor)->torch.Tensor:
     tar_sum = torch.sum(tar, (0))
-    px = (tar_sum > 1).nonzero().squeeze().tolist()
+    px = (tar_sum > 1).nonzero().tolist()
     for opx in px:
-      try:
-        if len(opx) > 1:
-          pxx, pxy = opx
-        else:
-          continue
+        pxx, pxy = opx
         overlapping_pixel = tar[:,pxx, pxy]
         padding_layers = tar[:,pxx-self.pad:pxx+(self.pad+1),pxy-self.pad:pxy+(self.pad+1)]
         pad_sum = torch.sum(padding_layers, (1,2))
@@ -134,6 +130,4 @@ class COCODataset(Dataset):
         pad_sum[pad_sum < max_value] = 0
         pad_sum[pad_sum >= max_value] = 1
         tar[:,pxx,pxy] = pad_sum
-      except:
-        print("!!!", opx)
     return tar.detach()
