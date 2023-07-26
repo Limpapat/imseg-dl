@@ -65,7 +65,8 @@ class COCODataset(Dataset):
     target[target > 1] = 1
     target[0] = -1 * (target[0] - 1)
     target = torch.as_tensor(target, dtype=torch.long)
-    target = self.clean_overlapping_pixel(target.detach())
+    if self.pad > 0:
+      target = self.clean_overlapping_pixel(target.detach())
     if self.transforms:
       image = self.transforms(image)
       target = self.transforms(target)
