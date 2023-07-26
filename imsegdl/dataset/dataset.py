@@ -121,6 +121,7 @@ class COCODataset(Dataset):
     tar_sum = torch.sum(tar, (0))
     px = (tar_sum > 1).nonzero().squeeze().tolist()
     for opx in px:
+      print("!!!", opx)
       if len(opx) > 1:
         pxx, pxy = opx
       else:
