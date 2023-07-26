@@ -2,9 +2,9 @@
 # updated : 04-03-2023
 # version : v1.0
 
-from pycocotools.coco import COCO
-from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon
+from pycocotools.coco import COCO
 import pycocotools.mask as maskUtils
 import matplotlib.pyplot as plt
 import numpy as np

@@ -2,12 +2,12 @@
 # updated : 10-03-2023
 # version : v1.0
 
-from PIL import Image
-from torch.utils.data import Dataset
-from imsegdl.dataset.imsegcoco import ImsegCOCO
-from imsegdl.utils.utils import load_categories_json
 from torchvision.transforms.functional import to_tensor
+from imsegdl.utils.utils import load_categories_json
+from imsegdl.dataset.imsegcoco import ImsegCOCO
 from torchvision.utils import save_image
+from torch.utils.data import Dataset
+from PIL import Image
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,6 +30,7 @@ class COCODataset(Dataset):
     if ptype not in ["segmentation", "object_detection"]:
       raise ValueError(f"Invalid ptype: ptype should be one of \'segmentation\', \'object_detection\' but found {ptype}")
     self.ptype = ptype
+    self.pad = 2
 
   def __len__(self):
     return len(self.ids)
@@ -64,6 +65,7 @@ class COCODataset(Dataset):
     target[target > 1] = 1
     target[0] = -1 * (target[0] - 1)
     target = torch.as_tensor(target, dtype=torch.long)
+    target = self.clean_overlapping_pixel(target.detach())
     if self.transforms:
       image = self.transforms(image)
       target = self.transforms(target)
@@ -113,3 +115,17 @@ class COCODataset(Dataset):
     self.coco.showAnns(anns, draw_bbox=draw_bbox)
     plt.axis('off')
     plt.show()
+
+  def clean_overlapping_pixel(self, tar:torch.Tensor)->torch.Tensor:
+    tar_sum = torch.sum(tar, (0))
+    px = (tar_sum > 1).nonzero().squeeze()
+    for pxx, pxy in px:
+      overlapping_pixel = tar[:,pxx, pxy]
+      padding_layers = tar[:,pxx-self.pad:pxx+(self.pad+1),pxy-self.pad:pxy+(self.pad+1)]
+      pad_sum = torch.sum(padding_layers, (1,2))
+      pad_sum = overlapping_pixel * pad_sum
+      max_value = torch.max(pad_sum)
+      pad_sum[pad_sum < max_value] = 0
+      pad_sum[pad_sum >= max_value] = 1
+      tar[:,pxx,pxy] = pad_sum
+    return tar.detach()

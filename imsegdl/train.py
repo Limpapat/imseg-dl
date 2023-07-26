@@ -3,11 +3,11 @@
 # version : v1.0
 
 from imsegdl.dataset.dataset import COCODataset
-from imsegdl.model.model import UNet
 from torch.utils.data import DataLoader
-import torch.optim.lr_scheduler as lr_scheduler
+from imsegdl.model import UNet
 from datetime import datetime
 from tqdm import tqdm
+import torch.optim.lr_scheduler as lr_scheduler
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import argparse
@@ -125,6 +125,7 @@ def train(params:dict):
             train_loss_vals.append(loss.item())
             optimizer.zero_grad()
             loss.backward()
+            nn.utils.clip_grad_value_(model.parameters(), 0.1)
             optimizer.step()
             if RES_PLOT:
                 # plot train prediction
