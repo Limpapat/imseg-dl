@@ -15,7 +15,7 @@ import torch
 import os
 
 class COCODataset(Dataset):
-  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train", ptype:str="segmentation", cs:dict={}):
+  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train", ptype:str="segmentation", cs:dict={}, pad:int=2):
     self.root_dir = root_dir
     self.coco = ImsegCOCO(annotation_file=ann_file, cs=cs)
     self.ids = list(sorted(self.coco.imgs.keys()))
@@ -30,7 +30,7 @@ class COCODataset(Dataset):
     if ptype not in ["segmentation", "object_detection"]:
       raise ValueError(f"Invalid ptype: ptype should be one of \'segmentation\', \'object_detection\' but found {ptype}")
     self.ptype = ptype
-    self.pad = 2
+    self.pad = pad
 
   def __len__(self):
     return len(self.ids)
