@@ -121,11 +121,13 @@ class COCODataset(Dataset):
     tar_sum = torch.sum(tar, (0))
     px = (tar_sum > 1).nonzero().squeeze().tolist()
     for opx in px:
-      print("!!!", opx)
-      if len(opx) > 1:
-        pxx, pxy = opx
-      else:
-        continue
+      try:
+        if len(opx) > 1:
+          pxx, pxy = opx
+        else:
+          continue
+      except:
+        print("!!!", opx)
       overlapping_pixel = tar[:,pxx, pxy]
       padding_layers = tar[:,pxx-self.pad:pxx+(self.pad+1),pxy-self.pad:pxy+(self.pad+1)]
       pad_sum = torch.sum(padding_layers, (1,2))
