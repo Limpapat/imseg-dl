@@ -46,6 +46,7 @@ def eval(params:dict):
     IMAGE_SIZE = params["image_size"] if "image_size" in params.keys() else 512
     CS = params['cs'] if 'cs' in params.keys() else {}
     PAD = params['pad'] if 'pad' in params.keys() else 0
+    N_CHANNELS = params['n_channels'] if 'n_channels' in params.keys() else 3
 
     # create empty _annotation.coco.json
     with open(CATEGORIES, 'r') as f:
@@ -65,7 +66,7 @@ def eval(params:dict):
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     # load trained model
-    model = UNet(n_channels=3, n_classes=N_CLASSES).to(DEVICE).train()
+    model = UNet(n_channels=N_CHANNELS, n_classes=N_CLASSES).to(DEVICE).train()
     # optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     model.load_state_dict(checkpoint['model_state_dict'])
     # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
