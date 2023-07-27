@@ -69,7 +69,7 @@ class COCODataset(Dataset):
       target = self.clean_overlapping_pixel(target.detach())
     if self.transforms:
       image = self.transforms(image)
-      target = self.transforms(target)
+      # target = self.transforms(target) # TODO
     
     if self.dbtype == "test":
       save_image(image, image_path)
