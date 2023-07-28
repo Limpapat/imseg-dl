@@ -28,7 +28,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         pred = np.zeros((ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
         for ann in anns:
             mask = ds.coco.annToMask(ann).astype(np.float32)
-            pred[ds.cats_idx_for_pred[ann['category_id']]] += mask
+            pred[ds.cats_idx_for_target[ann['category_id']]] += mask
             pred[0] += mask
         pred[pred > 1] = 1
         pred[0] = -1 * (pred[0] - 1)
@@ -47,7 +47,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         tar = np.zeros((gt_ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
         for ann in anns:
             mask = gt_ds.coco.annToMask(ann).astype(np.float32)
-            tar[gt_ds.cats_idx_for_pred[ann['category_id']]] += mask
+            tar[gt_ds.cats_idx_for_target[ann['category_id']]] += mask
             tar[0] += mask
         tar[tar > 1] = 1
         tar[0] = -1 * (tar[0] - 1)
