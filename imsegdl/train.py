@@ -128,7 +128,7 @@ def train(params:dict):
             logits = model(X)
             loss = criterion(logits, y.float())
             train_loss_vals.append(loss.item())
-            train_iou_scores.append(iou_score(logits, y.float().cpu()))
+            train_iou_scores.append(iou_score(logits.detach().cpu(), y.float().cpu()))
             optimizer.zero_grad()
             loss.backward()
             nn.utils.clip_grad_value_(model.parameters(), 0.1)
@@ -171,7 +171,7 @@ def train(params:dict):
                 logits = model(X)
                 val_loss = criterion(logits, y.float())
                 val_loss_vals.append(val_loss.item())
-                val_iou_scores.append(iou_score(logits, y.float()))
+                val_iou_scores.append(iou_score(logits.detach().cpu(), y.float().cpu()))
                 if RES_PLOT:
                     # plot val prediction
                     pred = nn.functional.softmax(logits.detach(), dim=1)
