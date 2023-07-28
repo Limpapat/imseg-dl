@@ -70,7 +70,7 @@ class COCODataset(Dataset):
     if self.transforms:
       image = self.transforms(image)
       # target = self.transforms(target) # TODO
-    if image.dim < 3:
+    if image.dim() < 3:
       image = torch.unsqueeze(image, 0)
     if self.dbtype == "test":
       save_image(image, image_path)
