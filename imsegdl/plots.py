@@ -25,15 +25,16 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         ann_ids = ds.coco.getAnnIds(imgIds=img['id'])
         anns = ds.coco.loadAnns(ann_ids)
         image = Image.open(f'{ds.root_dir}/{img["file_name"]}').convert('RGB')
-        pred = np.zeros((ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
-        for ann in anns:
-            if ann['category_id'] in ds.cats_idx_for_target.keys():
-                mask = ds.coco.annToMask(ann).astype(np.float32)
-                pred[ds.cats_idx_for_target[ann['category_id']]] += mask
-                pred[0] += mask
-        pred[pred > 1] = 1
-        pred[0] = -1 * (pred[0] - 1)
-        pred = torch.as_tensor(pred, dtype=torch.long)
+        _, pred = ds[idx]
+        # np.zeros((ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
+        # for ann in anns:
+        #     if ann['category_id'] in ds.cats_idx_for_target.keys():
+        #         mask = ds.coco.annToMask(ann).astype(np.float32)
+        #         pred[ds.cats_idx_for_target[ann['category_id']]] += mask
+        #         pred[0] += mask
+        # pred[pred > 1] = 1
+        # pred[0] = -1 * (pred[0] - 1)
+        # pred = torch.as_tensor(pred, dtype=torch.long)
         sp1.imshow(image)
         ds.coco.showAnns(anns, draw_bbox=False)
         plt.title(f"======= {ds.samples(idx)} =======")
@@ -45,15 +46,16 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         ann_ids = gt_ds.coco.getAnnIds(imgIds=img['id'])
         anns = gt_ds.coco.loadAnns(ann_ids)
         image = Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB')
-        tar = np.zeros((gt_ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
-        for ann in anns:
-            if ann['category_id'] in gt_ds.cats_idx_for_target.keys():
-                mask = gt_ds.coco.annToMask(ann).astype(np.float32)
-                tar[gt_ds.cats_idx_for_target[ann['category_id']]] += mask
-                tar[0] += mask
-        tar[tar > 1] = 1
-        tar[0] = -1 * (tar[0] - 1)
-        tar = torch.as_tensor(tar, dtype=torch.long)
+        _, tar = gt_ds[_mapping[idx]]
+        # np.zeros((gt_ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
+        # for ann in anns:
+        #     if ann['category_id'] in gt_ds.cats_idx_for_target.keys():
+        #         mask = gt_ds.coco.annToMask(ann).astype(np.float32)
+        #         tar[gt_ds.cats_idx_for_target[ann['category_id']]] += mask
+        #         tar[0] += mask
+        # tar[tar > 1] = 1
+        # tar[0] = -1 * (tar[0] - 1)
+        # tar = torch.as_tensor(tar, dtype=torch.long)
         sp2.imshow(image)
         gt_ds.coco.showAnns(anns, draw_bbox=False)
         plt.title(f"======= {gt_ds.samples(_mapping[idx])} =======")
