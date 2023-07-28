@@ -16,7 +16,6 @@ def idxmapping(imgs1:dict, imgs2:dict)->dict:
 def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->dict:
     _mapping = idxmapping(ds.coco.imgs, gt_ds.coco.imgs)
     for idx in range(len(ds)):
-        # print("!!!", idx)
         fig = plt.gcf()
         fig.set_size_inches(38, 18)
         # ds
@@ -27,15 +26,6 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         anns = ds.coco.loadAnns(ann_ids)
         image = Image.open(f'{ds.root_dir}/{img["file_name"]}').convert('RGB')
         _, pred = ds[idx]
-        # np.zeros((ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
-        # for ann in anns:
-        #     if ann['category_id'] in ds.cats_idx_for_target.keys():
-        #         mask = ds.coco.annToMask(ann).astype(np.float32)
-        #         pred[ds.cats_idx_for_target[ann['category_id']]] += mask
-        #         pred[0] += mask
-        # pred[pred > 1] = 1
-        # pred[0] = -1 * (pred[0] - 1)
-        # pred = torch.as_tensor(pred, dtype=torch.long)
         sp1.imshow(image)
         ds.coco.showAnns(anns, draw_bbox=False)
         plt.title(f"======= {ds.samples(idx)} =======")
@@ -48,25 +38,17 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         anns = gt_ds.coco.loadAnns(ann_ids)
         image = Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB')
         _, tar = gt_ds[_mapping[idx]]
-        # np.zeros((gt_ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
-        # for ann in anns:
-        #     if ann['category_id'] in gt_ds.cats_idx_for_target.keys():
-        #         mask = gt_ds.coco.annToMask(ann).astype(np.float32)
-        #         tar[gt_ds.cats_idx_for_target[ann['category_id']]] += mask
-        #         tar[0] += mask
-        # tar[tar > 1] = 1
-        # tar[0] = -1 * (tar[0] - 1)
-        # tar = torch.as_tensor(tar, dtype=torch.long)
         sp2.imshow(image)
         gt_ds.coco.showAnns(anns, draw_bbox=False)
         plt.title(f"======= {gt_ds.samples(_mapping[idx])} =======")
 
         # iou scores for each class
         sp3 = plt.subplot(1, 3, 3)
-        sp3.axis('Off')
+        sp3.axis('On')
         scores_plotting = {i:iou_score(pred[i],tar[i]) for i in range(ds.n_classes)}
         score = iou_score(pred, tar)
-        sp3.plot(list(scores_plotting.keys()), list(scores_plotting.values()))
+        sp3.plot(list(scores_plotting.keys()), list(scores_plotting.values()), '.-')
+        plt.grid(axis='y', linestyle='-')
         plt.xlabel("Class")
         plt.ylabel("IoU_score")
         plt.title(f"======= IoU = {score} =======")

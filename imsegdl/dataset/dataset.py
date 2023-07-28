@@ -15,7 +15,7 @@ import torch
 import os
 
 class COCODataset(Dataset):
-  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train", ptype:str="segmentation", cs:dict={}, pad:int=0):
+  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, ptype:str="segmentation", cs:dict={}, pad:int=0):
     self.root_dir = root_dir
     self.coco = ImsegCOCO(annotation_file=ann_file, cs=cs)
     self.ids = list(sorted(self.coco.imgs.keys()))
@@ -24,9 +24,6 @@ class COCODataset(Dataset):
     self.n_classes = len(self.categories)
     self.version = self.coco.dataset['info']['version']
     self.cats_idx_for_target = {j['id']:i for i, j in enumerate(self.categories)}
-    if dbtype not in ["train", "test"]:
-      raise ValueError("Invalid dbtype: {}".format(dbtype))
-    self.dbtype = dbtype
     if ptype not in ["segmentation", "object_detection"]:
       raise ValueError(f"Invalid ptype: ptype should be one of \'segmentation\', \'object_detection\' but found {ptype}")
     self.ptype = ptype
@@ -72,8 +69,6 @@ class COCODataset(Dataset):
       # target = self.transforms(target) # TODO
     if image.dim() < 3:
       image = torch.unsqueeze(image, 0)
-    # if self.dbtype == "test":
-    #   save_image(image, image_path)
 
     return image, target
   
