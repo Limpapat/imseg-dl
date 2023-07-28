@@ -82,9 +82,11 @@ def train(params:dict):
         optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     elif OPTIM_TYPE.lower() == 'sgd':
         optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.99)
+    elif OPTIM_TYPE.lower() == 'rmsprop':
+        optimizer = torch.optim.RMSprop(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-8, momentum=0.9)
     else:
         raise ValueError(f"Incorrect optimization : {OPTIM_TYPE} found")
-    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=3)
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min' if model.n_classes > 1 else 'max', patience=2)
     print("-"*40)
     print("Construct model : U-net")
     print("Initial weights : {}".format(INIT_WEIGHTS))
