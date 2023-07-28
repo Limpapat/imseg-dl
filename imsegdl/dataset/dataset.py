@@ -54,15 +54,11 @@ class COCODataset(Dataset):
           mask[bb_array[0]:bb_array[2], bb_array[1]:bb_array[3]] = 1.
           target[self.cats_idx_for_target[ann['category_id']]] += mask
     elif self.ptype == "segmentation":
-      print(anns)
-      print("-"*20)
       for ann in anns:
-        if ann['category_id'] in self.cats_idx_for_target.keys() and len(ann['segmentation']) > 0:
+        if ann['category_id'] in self.cats_idx_for_target.keys() and len(ann['segmentation']) > 0: # check cat_id & ignore empty ann
           mask = self.coco.annToMask(ann).astype(np.float32)
           target[self.cats_idx_for_target[ann['category_id']]] += mask
           target[0] += mask
-        else:
-          print(ann)
     else:
       pass
 
