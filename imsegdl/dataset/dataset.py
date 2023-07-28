@@ -3,7 +3,7 @@
 # version : v1.0
 
 from torchvision.transforms.functional import to_tensor
-from imsegdl.utils.utils import load_categories_json
+from imsegdl.utils import load_categories_json
 from imsegdl.dataset.imsegcoco import ImsegCOCO
 from torchvision.utils import save_image
 from torch.utils.data import Dataset
@@ -15,7 +15,7 @@ import torch
 import os
 
 class COCODataset(Dataset):
-  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train", ptype:str="segmentation", cs:dict={}, pad:int=10):
+  def __init__(self, root_dir, ann_file, categories_path=None, transforms=None, dbtype="train", ptype:str="segmentation", cs:dict={}, pad:int=0):
     self.root_dir = root_dir
     self.coco = ImsegCOCO(annotation_file=ann_file, cs=cs)
     self.ids = list(sorted(self.coco.imgs.keys()))

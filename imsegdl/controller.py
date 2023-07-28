@@ -1,7 +1,7 @@
+from imsegdl.plots import plot_test_gt, plot_cc
+from imsegdl.dataset import COCODataset
 from imsegdl.train import train
 from imsegdl.eval import eval
-from imsegdl.plots import plot_test_gt, plot_cc
-from imsegdl.dataset.dataset import COCODataset
 import json
 
 class ImsegDL:

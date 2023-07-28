@@ -2,8 +2,8 @@
 # updated : 12-03-2023
 # version : v1.0
 
-from imsegdl.utils.utils import gen_empty_annf, mask2ann
-from imsegdl.dataset.dataset import COCODataset
+from imsegdl.utils import gen_empty_annf, mask2ann, iou_score
+from imsegdl.dataset import COCODataset
 from torch.utils.data import DataLoader
 from imsegdl.model import UNet
 from datetime import datetime
@@ -84,6 +84,7 @@ def eval(params:dict):
     model.eval()
     anns={"last_ann_id":-1, "annotation":[]}
     with torch.no_grad():
+        iou_scores = []
         for idx, batch in enumerate(tqdm(test_loader)):
             X, y = batch
             X, y = X.to(DEVICE), y.to(DEVICE)
@@ -96,8 +97,9 @@ def eval(params:dict):
             #     pred[pred >= P] = 1
             #     pred[pred < P] = 0
             # gen annotation
-            pred_mask = pred.detach().cpu().squeeze().numpy()
-            anns = mask2ann(pred_mask, image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
+            pred_mask = pred.detach().cpu().squeeze()
+            iou_scores.append(iou_score(pred_mask, y.float().cpu()))
+            anns = mask2ann(pred_mask.numpy(), image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
             if RES_PLOT:
                 # plot prediction
                 fig = plt.gcf()
@@ -151,6 +153,8 @@ def eval(params:dict):
                     print(sample_fname)
                     plt.show()
                 """
+    print("----- TEST IoU : {}".format(sum(iou_scores)/len(iou_scores)))
+    print("-"*20)
     # update & save _annotation.coco.json
     with open(TEST_ANN_FILE, 'r') as f:
         annf = json.loads(f.read())

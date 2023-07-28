@@ -2,9 +2,10 @@
 # updated : 04-03-2023
 # version : v1.0
 
-from imsegdl.dataset.dataset import COCODataset
-from torch.utils.data import DataLoader
+from imsegdl.dataset import COCODataset
+from imsegdl.utils import iou_score
 from imsegdl.model import UNet
+from torch.utils.data import DataLoader
 from datetime import datetime
 from tqdm import tqdm
 import torch.optim.lr_scheduler as lr_scheduler
@@ -109,12 +110,14 @@ def train(params:dict):
     print("-"*40)
     LOSS_TRAIN_VALS = checkpoint["train_loss"] if PRETRAINED_MODEL else []
     LOSS_VALIDATION_VALS = checkpoint["val_loss"] if PRETRAINED_MODEL else []
+    IOU_TRAIN_SCORES = checkpoint["train_iou_score"] if PRETRAINED_MODEL else []
+    IOU_VALIDATION_SCORES = checkpoint["val_iou_score"] if PRETRAINED_MODEL else []
     early_stopping_counter = 0
     model_saving_path = None
     for e in range(INIT_EPOCHS, EPOCHS + 1):
         print("EPOCH : {}".format(e))
         model.train()
-        train_loss_vals = []
+        train_loss_vals, train_iou_scores = [], []
         train_loader = tqdm(train_loader)
         if RES_PLOT:
             fig = plt.gcf()
@@ -125,6 +128,7 @@ def train(params:dict):
             logits = model(X)
             loss = criterion(logits, y.float())
             train_loss_vals.append(loss.item())
+            train_iou_scores.append(iou_score(logits, y.float().cpu()))
             optimizer.zero_grad()
             loss.backward()
             nn.utils.clip_grad_value_(model.parameters(), 0.1)
@@ -148,12 +152,14 @@ def train(params:dict):
             if DISP_PLOT:
                 plt.show()
         LOSS_TRAIN_VALS.append(sum(train_loss_vals)/len(train_loss_vals))
+        IOU_TRAIN_SCORES.append(sum(train_iou_scores)/len(train_iou_scores))
         print("----- TRAIN Loss : {}".format(LOSS_TRAIN_VALS[-1]))
+        print("----- TRAIN IoU : {}".format(IOU_TRAIN_SCORES[-1]))
         print("-"*20)
 
         # validation
         model.eval()
-        val_loss_vals = []
+        val_loss_vals, val_iou_scores = [], []
         val_loader = tqdm(val_loader)
         if RES_PLOT:
             fig = plt.gcf()
@@ -165,6 +171,7 @@ def train(params:dict):
                 logits = model(X)
                 val_loss = criterion(logits, y.float())
                 val_loss_vals.append(val_loss.item())
+                val_iou_scores.append(iou_score(logits, y.float()))
                 if RES_PLOT:
                     # plot val prediction
                     pred = nn.functional.softmax(logits.detach(), dim=1)
@@ -188,7 +195,9 @@ def train(params:dict):
             scheduler.step(cum_loss)
             after_lr = optimizer.param_groups[0]["lr"]
             LOSS_VALIDATION_VALS.append(cum_loss)
+            IOU_VALIDATION_SCORES.append(sum(val_iou_scores)/len(val_iou_scores))
             print("----- VALIDATION Loss : {}".format(LOSS_VALIDATION_VALS[-1]))
+            print("----- VALIDATION IoU : {}".format(IOU_VALIDATION_SCORES[-1]))
             print("-"*20)
             best_loss = min(LOSS_VALIDATION_VALS)
             print("----- Best VALIDATION Loss : {}".format(best_loss))
@@ -204,7 +213,9 @@ def train(params:dict):
                     'n_classes' : N_CLASSES,
                     'version' : VERSION,
                     'train_loss' : LOSS_TRAIN_VALS,
-                    'val_loss' : LOSS_VALIDATION_VALS
+                    'val_loss' : LOSS_VALIDATION_VALS, 
+                    'train_iou_score' : IOU_TRAIN_SCORES,
+                    'val_iou_score' : IOU_VALIDATION_SCORES
                     }
                 # save best model
                 filename = "model_e{}.pth".format(str(e))
@@ -222,7 +233,9 @@ def train(params:dict):
                     'n_classes' : N_CLASSES,
                     'version' : VERSION,
                     'train_loss' : LOSS_TRAIN_VALS,
-                    'val_loss' : LOSS_VALIDATION_VALS
+                    'val_loss' : LOSS_VALIDATION_VALS,
+                    'train_iou_score' : IOU_TRAIN_SCORES,
+                    'val_iou_score' : IOU_VALIDATION_SCORES
                     }
                 # save best model
                 model_saving_path = os.path.join(saving_path, "model.pth")
