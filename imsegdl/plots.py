@@ -17,7 +17,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
     _mapping = idxmapping(ds.coco.imgs, gt_ds.coco.imgs)
     for idx in range(len(ds)):
         fig = plt.gcf()
-        fig.set_size_inches(38, 18)
+        fig.set_size_inches(28, 18)
         # ds
         sp1 = plt.subplot(1, 3, 1)
         sp1.axis('Off')
