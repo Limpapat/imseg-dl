@@ -84,7 +84,7 @@ def train(params:dict):
         optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.99)
     else:
         raise ValueError(f"Incorrect optimization : {OPTIM_TYPE} found")
-    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5)
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=4)
     print("-"*40)
     print("Construct model : U-net")
     print("Initial weights : {}".format(INIT_WEIGHTS))
