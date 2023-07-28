@@ -1,11 +1,8 @@
-from torchvision.transforms.functional import to_tensor
 from imsegdl.dataset import COCODataset
 from imsegdl.utils import iou_score
 from PIL import Image
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import numpy as np
-import torch
+import matplotlib.pyplot as plt
 
 def idxmapping(imgs1:dict, imgs2:dict)->dict:
     imgs1 = {k:v['file_name'] for k,v in imgs1.items()}

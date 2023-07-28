@@ -3,9 +3,8 @@
 # version : v1.0
 
 from torchvision.transforms.functional import to_tensor
-from imsegdl.utils import load_categories_json
 from imsegdl.dataset.imsegcoco import ImsegCOCO
-from torchvision.utils import save_image
+from imsegdl.utils import load_categories_json
 from torch.utils.data import Dataset
 from PIL import Image
 import matplotlib.patches as patches
@@ -113,7 +112,7 @@ class COCODataset(Dataset):
     plt.axis('off')
     plt.show()
 
-  def clean_overlapping_pixel(self, tar:torch.Tensor)->torch.Tensor:
+  def clean_overlapping_pixel(self, tar:torch.Tensor)->torch.Tensor: # TODO
     tar_sum = torch.sum(tar, (0))
     px = (tar_sum > 1).nonzero().tolist()
     for opx in px:
