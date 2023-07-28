@@ -16,6 +16,7 @@ def idxmapping(imgs1:dict, imgs2:dict)->dict:
 def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->dict:
     _mapping = idxmapping(ds.coco.imgs, gt_ds.coco.imgs)
     for idx in range(len(ds)):
+        # print("!!!", idx)
         fig = plt.gcf()
         fig.set_size_inches(38, 18)
         # ds
@@ -25,7 +26,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         ann_ids = ds.coco.getAnnIds(imgIds=img['id'])
         anns = ds.coco.loadAnns(ann_ids)
         image = Image.open(f'{ds.root_dir}/{img["file_name"]}').convert('RGB')
-        _, pred = ds[idx]
+        # _, pred = ds[idx]
         # np.zeros((ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
         # for ann in anns:
         #     if ann['category_id'] in ds.cats_idx_for_target.keys():
@@ -46,7 +47,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         ann_ids = gt_ds.coco.getAnnIds(imgIds=img['id'])
         anns = gt_ds.coco.loadAnns(ann_ids)
         image = Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB')
-        _, tar = gt_ds[_mapping[idx]]
+        # _, tar = gt_ds[_mapping[idx]]
         # np.zeros((gt_ds.n_classes, to_tensor(np.array(image)).shape[-2], to_tensor(np.array(image)).shape[-1]), dtype=np.float32)
         # for ann in anns:
         #     if ann['category_id'] in gt_ds.cats_idx_for_target.keys():
@@ -63,12 +64,12 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         # iou scores for each class
         sp3 = plt.subplot(1, 3, 3)
         sp3.axis('Off')
-        scores_plotting = {i:iou_score(pred[i],tar[i]) for i in range(ds.n_classes)}
-        score = iou_score(pred, tar)
-        sp3.plot(list(scores_plotting.keys()), list(scores_plotting.values()))
+        # scores_plotting = {i:iou_score(pred[i],tar[i]) for i in range(ds.n_classes)}
+        # score = iou_score(pred, tar)
+        # sp3.plot(list(scores_plotting.keys()), list(scores_plotting.values()))
         plt.xlabel("Class")
         plt.ylabel("IoU_score")
-        plt.title(f"======= IoU = {score} =======")
+        # plt.title(f"======= IoU = {score} =======")
         if plots_test_save is not None:
             plt.savefig(f'{plots_test_save}/cp_{ds.samples(idx)}.png')
         plt.show()
