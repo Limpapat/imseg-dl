@@ -268,7 +268,7 @@ def train(params:dict):
     plt.savefig(f'{saving_path}/loss.png')
     if DISP_PLOT:
         plt.show()
-    return model_saving_path if not model_saving_path else os.path.join(saving_path, "no_model_saved")
+    return model_saving_path if not model_saving_path else PRETRAINED_MODEL
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
