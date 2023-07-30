@@ -98,7 +98,9 @@ def eval(params:dict):
             #     pred[pred < P] = 0
             # gen annotation
             pred_mask = pred.detach().cpu().squeeze()
-            iou_scores.append(iou_score(pred_mask, y.float().cpu()))
+            sc = iou_score(pred_mask, y.float().cpu())
+            print("{}={}".format(test_loader.dataset.samples(idx), sc))
+            iou_scores.append(sc)
             anns = mask2ann(pred_mask.numpy(), image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
             if RES_PLOT:
                 # plot prediction
