@@ -34,7 +34,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         ann_ids = gt_ds.coco.getAnnIds(imgIds=img['id'])
         anns = gt_ds.coco.loadAnns(ann_ids)
         image = Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB')
-        _, tar = gt_ds[_mapping[idx]]
+        _, tar = gt_ds[idx]
         sp2.imshow(image)
         gt_ds.coco.showAnns(anns, draw_bbox=False)
         plt.title(f"======= {gt_ds.samples(_mapping[idx])} =======")
