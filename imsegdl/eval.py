@@ -35,7 +35,7 @@ def eval(params:dict):
     model_path = params["model_path"] if "model_path" in params.keys() else params["EVALUATION"]["MODEL_PATH"]
     checkpoint = torch.load(model_path, map_location=torch.device(DEVICE))
     N_CLASSES = checkpoint['n_classes']
-    LEARNING_RATE = checkpoint['learning_rate']
+    # LEARNING_RATE = checkpoint['learning_rate']
     VERSION = checkpoint['version']
     BATCH_SIZE = params["batch_size"] if "batch_size" in params.keys() else 1
     DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
@@ -57,7 +57,8 @@ def eval(params:dict):
                    stamp=now.strftime("%Y-%m-%dT%H:%M:%S+00:00"), 
                    cats=cats,
                    imformat=IMFORMAT,
-                   image_size=IMAGE_SIZE)
+                   image_size=IMAGE_SIZE,
+                   gt_path=GROUND_TRUTH_ANN_FILE)
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None

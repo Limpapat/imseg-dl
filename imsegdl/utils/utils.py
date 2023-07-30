@@ -60,7 +60,7 @@ def mask2ann(ground_truth_mask:np.array, image_id, cats_idx:dict, annotation:dic
     annotation["last_ann_id"] = ann_id
     return annotation
 
-def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str, cats:list, imformat:str="png", image_size:int=512):
+def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str, cats:list, imformat:str="png", image_size:int=512, gt_path:str=""):
     annf = {
         "info" : {
             "year" : stamp.split("-")[0],
@@ -79,9 +79,14 @@ def gen_empty_annf(root_dir:str, ann_dir:str, version:str, stamp:str, cats:list,
         "images" : [],
         "annotations" : [],
     }
-    imformat = f"*.{imformat}"
-    for i, n in enumerate(glob.glob(os.path.join(root_dir,imformat))):
-        annf["images"].append(gen_images_form(i, n.split("/")[-1], stamp, image_size))
+    if len(gt_path) > 0:
+        with open(gt_path, 'r') as f:
+            gt_annf = json.loads(f.read())
+        annf["images"] = gt_annf["images"]
+    else:
+        imformat = f"*.{imformat}"
+        for i, n in enumerate(glob.glob(os.path.join(root_dir,imformat))):
+            annf["images"].append(gen_images_form(i, n.split("/")[-1], stamp, image_size))
     with open(ann_dir, 'w') as f:
         f.write(json.dumps(annf, indent=4))
 
