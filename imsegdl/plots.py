@@ -30,7 +30,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         # gt_ds
         sp2 = plt.subplot(1, 3, 2)
         sp2.axis('Off')
-        img = gt_ds.coco.loadImgs(gt_ds.ids[_mapping[idx]])[0]
+        img = gt_ds.coco.loadImgs(gt_ds.ids[idx])[0]
         ann_ids = gt_ds.coco.getAnnIds(imgIds=img['id'])
         anns = gt_ds.coco.loadAnns(ann_ids)
         image = Image.open(f'{gt_ds.root_dir}/{img["file_name"]}').convert('RGB')
