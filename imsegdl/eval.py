@@ -108,7 +108,7 @@ def eval(params:dict):
                 sp.axis('Off')
                 y_detach = y.detach().cpu()
                 y_plot = torch.zeros([1, 1, y_detach.shape[-2], y_detach.shape[-1]])
-                for i in range(6):
+                for i in range(N_CLASSES):
                     y_plot += i*y_detach[:,i,:,:]
                 plt.imshow(y_plot.squeeze().numpy())
                 plt.title("ground truth")
