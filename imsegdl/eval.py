@@ -121,9 +121,10 @@ def eval(params:dict):
     # update & save _annotation.coco.json
     with open(TEST_ANN_FILE, 'r') as f:
         annf = json.loads(f.read())
-    annf_annotation = annf['annotations']
-    annf_annotation.extend(anns['annotation'])
-    annf['annotations'] = annf_annotation
+    # annf_annotation = annf['annotations']
+    # annf_annotation.extend(anns['annotation'])
+    # annf['annotations'] = annf_annotation
+    annf['annotations'] = anns['annotation']
     with open(TEST_ANN_FILE, 'w') as f:
         f.write(json.dumps(annf, indent=4))
     return saving_path, pred
