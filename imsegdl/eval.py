@@ -91,7 +91,7 @@ def eval(params:dict):
             sc = iou_score(pred_mask, y.float().cpu())
             print("{}={}".format(test_loader.dataset.samples(idx), sc))
             iou_scores.append(sc)
-            anns = mask2ann(pred_mask.numpy(), image_id=idx, annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
+            anns = mask2ann(pred_mask.numpy(), image_id=test_dataset.ids[idx], annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
             if RES_PLOT:
                 # plot prediction
                 fig = plt.gcf()
