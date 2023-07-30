@@ -89,7 +89,7 @@ def eval(params:dict):
             # gen annotation
             pred_mask = pred.detach().cpu().squeeze()
             sc = iou_score(pred_mask, y.float().cpu())
-            print("{}={}".format(test_loader.dataset.samples(idx), sc))
+            # print("{}={}".format(test_loader.dataset.samples(idx), sc))
             iou_scores.append(sc)
             anns = mask2ann(pred_mask.numpy(), image_id=test_dataset.ids[idx], annotation=anns, cats_idx=test_dataset.cats_idx_for_target)
             if RES_PLOT:
