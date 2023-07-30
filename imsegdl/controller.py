@@ -14,6 +14,7 @@ class ImsegDL:
         self.val_dataset = None
         self.test_dataset = None
         self.ground_truth_dataset = None
+        self.cache = None
 
     def __gen_dataset(self):
         cs = self.params['cs'] if 'cs' in self.params.keys() else {}
@@ -35,9 +36,10 @@ class ImsegDL:
     def eval_model(self):
         print("-"*40)
         print("--- Start evaluation: trained model path is {}".format(self.params["EVALUATION"]["MODEL_PATH"]))
-        saving_eval_path = eval(self.params)
+        saving_eval_path, cache = eval(self.params)
         print("--- Stop evaluation: results are saved to {}".format(saving_eval_path))
         print("-"*40)
+        self.cache = cache
         return saving_eval_path
     
     @property

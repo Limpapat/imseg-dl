@@ -40,7 +40,6 @@ def eval(params:dict):
     BATCH_SIZE = params["batch_size"] if "batch_size" in params.keys() else 1
     DISP_PLOT = params["disp_plot"] if "disp_plot" in params.keys() else False
     RES_PLOT = params['res_plot'] if "res_plot" in params.keys() else True
-    # P = params['p'] if "p" in params.keys() else None
     PTYPE = params["ptype"] if "ptype" in params.keys() else "segmentation"
     IMFORMAT = params["imformat"] if "imformat" in params.keys() else "png"
     IMAGE_SIZE = params["image_size"] if "image_size" in params.keys() else 512
@@ -67,17 +66,11 @@ def eval(params:dict):
 
     # load trained model
     model = UNet(n_channels=N_CHANNELS, n_classes=N_CLASSES).to(DEVICE).train()
-    # optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     model.load_state_dict(checkpoint['model_state_dict'])
-    # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 
     # define saving evaluation results path
     saving_path = os.path.join(RESULT_PATH, "evaluation_{}".format(datetime.now().strftime("%Y%m%d%H%M%S")))
     os.mkdir(saving_path)
-
-    # if P is not None:
-    #     print("-"*40)
-    #     print("Filter with probability : {}".format(P))
     print("-"*40)
 
     # evaluation
@@ -92,10 +85,6 @@ def eval(params:dict):
             pred = nn.functional.softmax(logits.detach(), dim=1)
             pred_argmax = torch.argmax(pred, dim=1, keepdims=True)
             pred = torch.zeros_like(pred).scatter_(1, pred_argmax, 1)
-            # pred = pred.sigmoid()
-            # if P is not None:
-            #     pred[pred >= P] = 1
-            #     pred[pred < P] = 0
             # gen annotation
             pred_mask = pred.detach().cpu().squeeze()
             sc = iou_score(pred_mask, y.float().cpu())
@@ -127,34 +116,6 @@ def eval(params:dict):
                 if DISP_PLOT:
                     print(sample_fname)
                     plt.show()
-                """
-                sp = plt.subplot(1, 8, 1)
-                sp.axis('Off')
-                y_detach = y.detach().cpu()
-                y_plot = torch.zeros([BATCH_SIZE, 1, y_detach.shape[-2], y_detach.shape[-1]])
-                for i in range(N_CLASSES):
-                    y_plot += y_detach[:,i,:,:]
-                plt.imshow(y_plot.squeeze().numpy())
-                plt.title("ground truth")
-                sp = plt.subplot(1, 8, 2)
-                sp.axis('Off')
-                pred_detach = pred.detach().cpu()
-                pred_plot = torch.zeros([BATCH_SIZE, 1, pred_detach.shape[-2], pred_detach.shape[-1]])
-                for i in range(N_CLASSES):
-                    pred_plot += pred_detach[:,i,:,:]
-                plt.imshow(pred_plot.squeeze().numpy())
-                plt.title("all")
-                for i in range(N_CLASSES):
-                    sp = plt.subplot(1, 8, 3+i)
-                    sp.axis('Off')
-                    plt.imshow(pred_detach[:,i,:,:].squeeze().numpy())
-                    plt.title(f"class {i}")
-                sample_fname = test_loader.dataset.samples(idx)
-                plt.savefig(f'{saving_path}/eval_{idx}_{sample_fname}.png')
-                if DISP_PLOT:
-                    print(sample_fname)
-                    plt.show()
-                """
     print("----- TEST IoU : {}".format(sum(iou_scores)/len(iou_scores)))
     print("-"*20)
     # update & save _annotation.coco.json
@@ -165,7 +126,7 @@ def eval(params:dict):
     annf['annotations'] = annf_annotation
     with open(TEST_ANN_FILE, 'w') as f:
         f.write(json.dumps(annf, indent=4))
-    return saving_path
+    return saving_path, pred
             
 
 if __name__ == "__main__":
