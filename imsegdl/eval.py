@@ -51,6 +51,7 @@ def eval(params:dict):
     with open(CATEGORIES, 'r') as f:
         cats = json.loads(f.read())
     now = datetime.now()
+    gt_path = GROUND_TRUTH_ANN_FILE if GROUND_TRUTH_ANN_FILE != TEST_ANN_FILE else ""
     gen_empty_annf(root_dir=TEST_DIR,
                    ann_dir=TEST_ANN_FILE,
                    version=VERSION, 
@@ -58,7 +59,7 @@ def eval(params:dict):
                    cats=cats,
                    imformat=IMFORMAT,
                    image_size=IMAGE_SIZE,
-                   gt_path=GROUND_TRUTH_ANN_FILE)
+                   gt_path=gt_path)
 
     # load test dataset
     transform = params["transform"] if "transform" in params.keys() else None
