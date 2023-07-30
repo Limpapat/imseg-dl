@@ -37,7 +37,7 @@ def plot_test_gt(ds:COCODataset, gt_ds:COCODataset, plots_test_save:str=None)->d
         _, tar = gt_ds[idx]
         sp2.imshow(image)
         gt_ds.coco.showAnns(anns, draw_bbox=False)
-        plt.title(f"======= {gt_ds.samples(_mapping[idx])} =======")
+        plt.title(f"======= {gt_ds.samples(idx)} =======")
 
         # iou scores for each class
         sp3 = plt.subplot(1, 3, 3)
