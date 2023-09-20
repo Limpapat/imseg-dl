@@ -114,7 +114,7 @@ class CNN(nn.Module):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=(2, 2), stride=2, padding=0)
         )
-        self.classifier = self.fe = nn.Sequential(
+        self.classifier = nn.Sequential(
             nn.Linear(64 * 33 * 33, 128),
             nn.ReLU(inplace=True),
             nn.Linear(128, 64),
