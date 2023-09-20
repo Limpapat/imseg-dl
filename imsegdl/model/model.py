@@ -112,15 +112,14 @@ class CNN(nn.Module):
             nn.MaxPool2d(kernel_size=(2, 2), stride=2, padding=0),
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=(3, 3), stride=1, padding=1),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=(2, 2), stride=2, padding=0),
-            nn.Flatten()
+            nn.MaxPool2d(kernel_size=(2, 2), stride=2, padding=0)
         )
         self.classifier = self.fe = nn.Sequential(
             nn.Linear(64 * 33 * 33, 128),
             nn.ReLU(inplace=True),
             nn.Linear(128, 64),
             nn.ReLU(inplace=True),
-            nn.Linear(64, n_classes),
+            nn.Linear(64, n_classes)
         )
         if init_weights:
             self.apply(self._init_weights)
