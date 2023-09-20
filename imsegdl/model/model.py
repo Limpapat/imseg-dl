@@ -134,7 +134,6 @@ class CNN(nn.Module):
     
     def forward(self, x):
         x = self.fe(x)
-        return x.size()
-        # x = x.view(-1, 64 * 33 * 33)
-        # logits = self.classifier(x)
-        # return logits
+        x = x.view(-1, 64 * 33 * 33)
+        logits = self.classifier(x)
+        return logits
