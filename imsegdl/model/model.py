@@ -117,7 +117,9 @@ class CNN(nn.Module):
         )
         self.classifier = self.fe = nn.Sequential(
             nn.Linear(64 * 33 * 33, 128),
+            nn.ReLU(inplace=True),
             nn.Linear(128, 64),
+            nn.ReLU(inplace=True),
             nn.Linear(64, n_classes),
         )
         if init_weights:
@@ -133,5 +135,6 @@ class CNN(nn.Module):
     
     def forward(self, x):
         x = self.fe(x)
+        x = x.view(-1, 64 * 33 * 33)
         logits = self.classifier(x)
         return logits
