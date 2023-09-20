@@ -1,1 +1,1 @@
-from imsegdl.model.model import UNet
+from imsegdl.model.model import UNet, CNN
