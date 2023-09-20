@@ -96,3 +96,42 @@ class UNet(nn.Module):
         x = self.up4(x, x1)
         logits = self.outc(x)
         return logits
+    
+class CNN(nn.Module):
+    def __init__(self, n_channels, n_classes, init_weights:bool=True):
+        super(CNN, self).__init__()
+        self.fe = nn.Sequential(
+            nn.Conv2d(in_channels=n_channels, out_channels=32, kernel_size=(3, 3), stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=(2, 2), stride=2, padding=0),
+            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(3, 3), stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=(2, 2), stride=2, padding=0),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=(3, 3), stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=(2, 2), stride=2, padding=0),
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=(3, 3), stride=1, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=(2, 2), stride=2, padding=0),
+            nn.Flatten()
+        )
+        self.classifier = self.fe = nn.Sequential(
+            nn.Linear(64 * 33 * 33, 128),
+            nn.Linear(128, 64),
+            nn.Linear(64, n_classes),
+        )
+        if init_weights:
+            self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        if isinstance(module, nn.Conv2d) or isinstance(module, nn.ConvTranspose2d):
+            _, f, k1, k2 = module.weight.data.shape
+            N = sqrt(2/(f*k1*k2))
+            module.weight.data.normal_(0., N)
+            if module.bias is not None:
+                module.bias.data.zero_()
+    
+    def forward(self, x):
+        x = self.fe(x)
+        logits = self.classifier(x)
+        return logits
