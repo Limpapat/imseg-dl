@@ -22,5 +22,3 @@ ims = ImsegDL("/path/to/params.json",
 # Train & Evaluate the model
 ims.train_eval_model
 ```
-
-Hi 
