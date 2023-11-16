@@ -4,10 +4,11 @@
 
 from imsegdl.dataset import COCODataset
 from imsegdl.utils import iou_score
-from imsegdl.model import UNet
+from imsegdl.model import UNet, models
 from torch.utils.data import DataLoader
 from datetime import datetime
 from tqdm import tqdm
+from math import sqrt
 import torch.optim.lr_scheduler as lr_scheduler
 import matplotlib.pyplot as plt
 import torch.nn as nn
@@ -55,6 +56,7 @@ def train(params:dict):
     INIT_WEIGHTS = params['init_weights'] if 'init_weights' in params.keys() else False
     PAD = params['pad'] if 'pad' in params.keys() else 0
     N_CHANNELS = params['n_channels'] if 'n_channels' in params.keys() else 3
+    MODEL_TYPE = params['model_type'] if 'model_type' in params.keys() else "unet"
 
     # load dataset
     train_dataset = COCODataset(TRAIN_DIR, TRAIN_ANN_FILE, categories_path=CATEGORIES, transforms=TRANSFORM, ptype=PTYPE, cs=CS, pad=PAD)
@@ -72,7 +74,16 @@ def train(params:dict):
     N_TRAIN, N_VAL = len(train_loader), len(val_loader)
     
     # create an instance of the U-Net model
-    model = UNet(n_channels=N_CHANNELS, n_classes=N_CLASSES, init_weights=INIT_WEIGHTS).to(DEVICE).train()
+    if MODEL_TYPE == 'unet':
+        model = UNet(n_channels=N_CHANNELS, n_classes=N_CLASSES, init_weights=INIT_WEIGHTS).to(DEVICE).train()
+    elif MODEL_TYPE == 'vit':
+        model = models.vit_b_16(weights=models.ViT_B_16_Weights.IMAGENET1K_SWAG_E2E_V1)
+        model.heads.head = nn.Linear(in_features=model.heads.head.in_features, out_features=len(N_CLASSES), bias=True)
+        k1, k2 = model.heads.head.weight.data.shape
+        model.heads.head.weight.data.normal_(0., sqrt(2/(k1*k2)))
+        model = model.to(DEVICE).train()
+    else:
+        raise KeyError(f"unsupport model : {MODEL_TYPE}")
 
     # define the loss function and optimizer
     weights = torch.tensor(CLASS_WEIGHT).cuda(DEVICE) if len(CLASS_WEIGHT) > 0 else None # adding class weight for imbanlance training dataset
